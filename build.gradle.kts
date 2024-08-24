@@ -10,7 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.26") // добавление зависимостей lombok
+    implementation("org.projectlombok:lombok:1.18.34") // добавление зависимостей lombok
+    annotationProcessor ("org.projectlombok:lombok:1.18.34") // для обработки аннотаций
     testImplementation(platform("org.junit:junit-bom:5.9.1")) // управление версиями зависимостей, связанных с JUnit, с помощью BOM, что позволяет определить, какие версии различных библиотек следует использовать, чтобы они были совместимыми друг с другом
     testImplementation("org.junit.jupiter:junit-jupiter") // добавление зависимости для написания и запуска тестов в Java
     testImplementation("junit:junit:4.13.2") // добавления библиотеки JUnit, для написания и выполнения автоматизированных тестов на Java
