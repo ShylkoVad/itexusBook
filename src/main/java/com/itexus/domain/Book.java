@@ -2,7 +2,11 @@ package com.itexus.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Data
 public class Book {
     @JsonProperty("id")
@@ -13,4 +17,7 @@ public class Book {
     private String author;
     @JsonProperty("description")
     private String description;
+
+
+
 }
