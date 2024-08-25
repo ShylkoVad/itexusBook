@@ -30,7 +30,7 @@ public class BookService {
         bookRepository.delete(id);
     }
 
-    public void findByIdBook (Long id) {
-        bookRepository.findById(id);
+    public Book findByIdBook (Long id) {
+        return bookRepository.findById(id);
     }
 }
