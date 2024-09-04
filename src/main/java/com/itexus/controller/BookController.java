@@ -2,23 +2,39 @@ package com.itexus.controller;
 
 import com.itexus.domain.Book;
 import com.itexus.service.BookService;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 @Controller
 public class BookController {
     private final BookService bookService;
+    private final MessageSource messageSource;
 
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, MessageSource messageSource) {
         this.bookService = bookService;
+        this.messageSource = messageSource;
     }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
+
+        //Выбор языка
+        System.out.println("Выберите язык / Chose language (ru / en):");
+        String langChoice = scanner.nextLine();
+        Locale locale;
+        if ("ru".equalsIgnoreCase(langChoice)) {
+            locale = new Locale("ru");
+        } else {
+            locale = new Locale("en");
+        }
+        System.out.println(messageSource.getMessage("welcome.message", null, locale));
+
         while (true) {
-            System.out.println("Выберите необходимую опцию:");
+            System.out.println(messageSource.getMessage("selecting.option", null, locale));
             System.out.println("1. Вывести весь список книг.");
             System.out.println("2. Создать новую книгу.");
             System.out.println("3. Отредактировать книгу.");
