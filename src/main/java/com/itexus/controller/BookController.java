@@ -27,9 +27,9 @@ public class BookController {
         String langChoice = scanner.nextLine();
         Locale locale;
         if ("ru".equalsIgnoreCase(langChoice)) {
-            locale = new Locale("ru");
+            locale = Locale.forLanguageTag("ru");
         } else {
-            locale = new Locale("en");
+            locale = Locale.forLanguageTag("en");
         }
         System.out.println(messageSource.getMessage("welcome.message", null, locale));
 
