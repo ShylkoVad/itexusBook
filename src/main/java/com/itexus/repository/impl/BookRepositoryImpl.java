@@ -19,6 +19,7 @@ public class BookRepositoryImpl implements BookRepository {
     private static final String COLUMN_SEPARATOR = ";";
     private final File csvFile = new File(CSV_FILE_PATH);
 
+
     @Override
     public List<Book> findAll() {
         try {
