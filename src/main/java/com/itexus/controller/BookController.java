@@ -133,17 +133,17 @@ public class BookController {
         scanner.nextLine(); // очистка буфера
         Book existingBook = bookService.findByIdBook(id);
         if (existingBook == null) {
-            System.out.println(messageSource.getMessage("massage.bookNotFound", null, locale));
+            System.out.println(messageSource.getMessage("message.bookNotFound", null, locale));
 
             return;
         }
-        System.out.println(messageSource.getMessage("massage.updateTitle", null, locale));
+        System.out.println(messageSource.getMessage("message.updateTitle", null, locale));
 
         String title = scanner.nextLine();
-        System.out.println(messageSource.getMessage("massage.updateAuthor", null, locale));
+        System.out.println(messageSource.getMessage("message.updateAuthor", null, locale));
 
         String author = scanner.nextLine();
-        System.out.println(messageSource.getMessage("massage.updateDescription", null, locale));
+        System.out.println(messageSource.getMessage("message.updateDescription", null, locale));
 
         String description = scanner.nextLine();
 
@@ -152,24 +152,24 @@ public class BookController {
         if (!description.isEmpty()) existingBook.setDescription(description);
 
         bookService.updateBook(existingBook);
-        System.out.println(messageSource.getMessage("massage.updateBook", null, locale));
+        System.out.println(messageSource.getMessage("message.updateBook", null, locale));
 
     }
 
     private void deleteBook(Scanner scanner) {
-        System.out.println(messageSource.getMessage("massage.deleteId", null, locale));
+        System.out.println(messageSource.getMessage("message.deleteId", null, locale));
 
         Long id = scanner.nextLong();
         bookService.deleteBook(id);
     }
 
     private void findByIdBook(Scanner scanner) {
-        System.out.println(messageSource.getMessage("massage.findId", null, locale));
+        System.out.println(messageSource.getMessage("message.findId", null, locale));
 
         Long id = scanner.nextLong();
         Book existingBook = bookService.findByIdBook(id);
         if (existingBook == null) {
-            System.out.println(messageSource.getMessage("massage.bookNotFound", null, locale));
+            System.out.println(messageSource.getMessage("message.bookNotFound", null, locale));
 
             return;
         }
