@@ -2,7 +2,6 @@ package com.itexus.controller;
 
 import com.itexus.domain.Book;
 import com.itexus.service.BookService;
-
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -14,6 +13,7 @@ import java.util.Scanner;
 public class BookController {
     private final BookService bookService;
     private final MessageSource messageSource;
+    Locale locale;
 
     public BookController(BookService bookService, MessageSource messageSource) {
         this.bookService = bookService;
@@ -26,7 +26,6 @@ public class BookController {
         //Выбор языка
         System.out.println("Выберите язык / Chose language (ru / en):");
         String langChoice = scanner.nextLine();
-        Locale locale;
         if ("ru".equalsIgnoreCase(langChoice)) {
             locale = Locale.forLanguageTag("ru");
         } else {
@@ -35,13 +34,13 @@ public class BookController {
         System.out.println(messageSource.getMessage("welcome.message", null, locale));
 
         while (true) {
-            System.out.println("Выберите необходимую опцию:");
-            System.out.println("1. Вывести весь список книг.");
-            System.out.println("2. Создать новую книгу.");
-            System.out.println("3. Отредактировать книгу.");
-            System.out.println("4. Удалить книгу.");
-            System.out.println("5. Получить информацию о книге");
-            System.out.println("6. Выход.");
+            System.out.println(messageSource.getMessage("option.select", null, locale));
+            System.out.println(messageSource.getMessage("findAllBooks", null, locale));
+            System.out.println(messageSource.getMessage("saveBook", null, locale));
+            System.out.println(messageSource.getMessage("updateBook", null, locale));
+            System.out.println(messageSource.getMessage("deleteBook", null, locale));
+            System.out.println(messageSource.getMessage("findByIdBook", null, locale));
+            System.out.println(messageSource.getMessage("exit", null, locale));
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // очистка буфера ввода
@@ -65,7 +64,7 @@ public class BookController {
                 case 6:
                     return;
                 default:
-                    System.out.println("Выбор сделан неверно. Повторите пожалуйста попытку.");
+                    System.out.println(messageSource.getMessage("message.select", null, locale));
             }
         }
     }
@@ -74,7 +73,7 @@ public class BookController {
         List<Book> bookList = bookService.findAllBooks();
         // Проверка на наличие книг
         if (bookList == null || bookList.isEmpty()) {
-            System.out.println("Список книг пуст.");
+            System.out.println(messageSource.getMessage("message.listEmpty", null, locale));
             return;
         }
         // Вывод информации о каждой книге
@@ -89,23 +88,24 @@ public class BookController {
     }
 
     private void saveBook(Scanner scanner) {
-        System.out.println("Введите название книги: ");
+        System.out.println(messageSource.getMessage("message.title", null, locale));
         String title = scanner.nextLine().trim();
 
         if (title.isEmpty()) {
-            System.out.println("Название книги не может быть пустым.");
+            System.out.println(messageSource.getMessage("message.titleEmpty", null, locale));
             return;
         }
 
-        System.out.println("Введите имя автора: ");
+        System.out.println(messageSource.getMessage("message.author", null, locale));
         String author = scanner.nextLine().trim();
 
         if (author.isEmpty()) {
-            System.out.println("Строка автора не может быть пустой.");
+            System.out.println(messageSource.getMessage("message.authorEmpty", null, locale));
             return;
         }
 
-        System.out.println("Введите краткое описание: ");
+        System.out.println(messageSource.getMessage("message.description", null, locale));
+
         String description = scanner.nextLine().trim();  // Можно обрабатывать описания по правилам
 
         Long id = generateUniqueId(); // Переход на метод генерации уникального ID
@@ -113,9 +113,11 @@ public class BookController {
 
         try {
             bookService.saveBook(book);
-            System.out.println("Книга успешно сохранена.");
+            System.out.println(messageSource.getMessage("message.saveBook", null, locale));
+
         } catch (Exception e) {
-            System.err.println("Ошибка при сохранении книги: " + e.getMessage());
+            System.out.println(messageSource.getMessage("message.saveBookError", null, locale) + e.getMessage());
+
         }
     }
 
@@ -125,19 +127,24 @@ public class BookController {
     }
 
     private void updateBook(Scanner scanner) {
-        System.out.println("Введите id книги для редактирования:");
+        System.out.println(messageSource.getMessage("message.updateId", null, locale));
+
         Long id = scanner.nextLong();
         scanner.nextLine(); // очистка буфера
         Book existingBook = bookService.findByIdBook(id);
         if (existingBook == null) {
-            System.out.println("Данная книга не найдена.");
+            System.out.println(messageSource.getMessage("massage.bookNotFound", null, locale));
+
             return;
         }
-        System.out.println("Введите новое название книги или оставьте пустым (для сохранения текущего):");
+        System.out.println(messageSource.getMessage("massage.updateTitle", null, locale));
+
         String title = scanner.nextLine();
-        System.out.println("Введите новое имя автора или оставьте пустым (для сохранения текущего):");
+        System.out.println(messageSource.getMessage("massage.updateAuthor", null, locale));
+
         String author = scanner.nextLine();
-        System.out.println("Введите новое описание книги или оставьте пустым (для сохранения текущего):");
+        System.out.println(messageSource.getMessage("massage.updateDescription", null, locale));
+
         String description = scanner.nextLine();
 
         if (!title.isEmpty()) existingBook.setTitle(title);
@@ -145,21 +152,25 @@ public class BookController {
         if (!description.isEmpty()) existingBook.setDescription(description);
 
         bookService.updateBook(existingBook);
-        System.out.println("Книга успешно обновлена.");
+        System.out.println(messageSource.getMessage("massage.updateBook", null, locale));
+
     }
 
     private void deleteBook(Scanner scanner) {
-        System.out.println("Введите id книги для удаления:");
+        System.out.println(messageSource.getMessage("massage.deleteId", null, locale));
+
         Long id = scanner.nextLong();
         bookService.deleteBook(id);
     }
 
     private void findByIdBook(Scanner scanner) {
-        System.out.println("Введите id книги для получения информации:");
+        System.out.println(messageSource.getMessage("massage.findId", null, locale));
+
         Long id = scanner.nextLong();
         Book existingBook = bookService.findByIdBook(id);
         if (existingBook == null) {
-            System.out.println("Данная книга не найдена.");
+            System.out.println(messageSource.getMessage("massage.bookNotFound", null, locale));
+
             return;
         }
         String output = String.format("%d: %s, %s, %s",
