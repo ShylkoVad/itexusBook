@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.itexus.domain.Book;
 import com.itexus.repository.BookRepository;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Repository
 public class BookRepositoryImpl implements BookRepository {
@@ -21,7 +23,12 @@ public class BookRepositoryImpl implements BookRepository {
     private static final char COLUMN_SEPARATOR = ';';
     private final File csvFile = new File(CSV_FILE_PATH);
     private final CsvMapper csvMapper = new CsvMapper(); // класс из библиотеки Jackson, предназначенный для работы с CSV данными
+    Locale locale;
+    private final MessageSource messageSource;
 
+    public BookRepositoryImpl(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Override
     public List<Book> findAll() {
@@ -86,7 +93,8 @@ public class BookRepositoryImpl implements BookRepository {
 
         // Проверка на пустой список книг
         if (books == null || books.isEmpty()) {
-            System.out.println("Список книг пуст, ничего не записано в файл.");
+            System.out.println(messageSource.getMessage("message.listEmptyBooks", null, locale));
+
             return;
         }
 
@@ -111,10 +119,11 @@ public class BookRepositoryImpl implements BookRepository {
 
             // Записываем данные в файл (в режиме добавления)
             csvMapper.writer(schema).writeValue(csvFile, books);
-            System.out.println("Данные успешно записаны в файл " + CSV_FILE_PATH + ".");
+            System.out.println(messageSource.getMessage("message.dataRecorded", null, locale) + CSV_FILE_PATH + ".");
+
         } catch (IOException e) {
-            System.err.println("Ошибка записи в CSV файл: " + e.getMessage());
+            System.out.println(messageSource.getMessage("message.dataRecordedError", null, locale) + e.getMessage());
+
         }
     }
-
 }
