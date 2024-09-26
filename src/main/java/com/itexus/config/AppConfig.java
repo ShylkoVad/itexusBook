@@ -19,9 +19,4 @@ public class AppConfig {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
-
-    @Bean
-    public LoggingAspect loggingAspect() {
-        return new LoggingAspect();
-    }
 }
