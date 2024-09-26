@@ -21,7 +21,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2") // содержит аннотации, такие как @JsonProperty, которые можно использовать в коде для управления сериализацией и десериализацией
     implementation("com.fasterxml.jackson.core:jackson-core:2.17.2") // базовый модуль, который необходим для работы Jackson
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2") // для добавления зависимости на библиотеку Jackson Dataformat для работы с CSV файлами
-    implementation ("org.springframework.boot:spring-boot-starter-aop") // зависимость для Spring AOP
+    implementation ("org.springframework.boot:spring-boot-starter-aop:3.3.4") // зависимость для Spring AOP
 
 }
 
