@@ -1,6 +1,5 @@
 package com.itexus.aspect;
 
-import com.itexus.controller.BookController;
 import com.itexus.util.ApplicationContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -16,11 +15,10 @@ import java.util.Locale;
 @Component
 public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+    private final MessageSource messageSource;
 
-    private  MessageSource messageSource;
-
-    public LoggingAspect(BookController controller) {
-        this.messageSource = controller.getMessageSource();
+    public LoggingAspect(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     @After("execution(* com.itexus.service..*(..))")
