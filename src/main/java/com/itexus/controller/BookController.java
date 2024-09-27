@@ -21,6 +21,7 @@ public class BookController {
     private final BookService bookService;
     private final MessageSource messageSource;
     Locale locale;
+    private Long maxId = 0L;
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -82,6 +83,12 @@ public class BookController {
             System.out.println(messageSource.getMessage("message.listEmpty", null, locale));
             return;
         }
+        // Получаем максимальный ID из списка книг или 0, если список пуст
+        maxId = bookList.stream()
+                .map(Book::getId)
+                .max(Long::compareTo)
+                .orElse(0L);
+
         // Вывод информации о каждой книге
         for (Book book : bookList) {
             String output = String.format("%d: %s, %s, %s",
@@ -129,7 +136,7 @@ public class BookController {
 
     private Long generateUniqueId() {
         // Логика для генерации уникального ID
-        return (long) (bookService.findAllBooks().size() + 1);
+        return maxId + 1; // Увеличиваем максимальный ID на 1 для нового уникального ID
     }
 
     private void updateBook(Scanner scanner) {
