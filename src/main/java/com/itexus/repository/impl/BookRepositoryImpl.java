@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.itexus.domain.Book;
 import com.itexus.repository.BookRepository;
+import com.itexus.util.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +24,6 @@ public class BookRepositoryImpl implements BookRepository {
     private static final char COLUMN_SEPARATOR = ';';
     private final File csvFile = new File(CSV_FILE_PATH);
     private final CsvMapper csvMapper = new CsvMapper(); // класс из библиотеки Jackson, предназначенный для работы с CSV данными
-    Locale locale;
     private final MessageSource messageSource;
 
     public BookRepositoryImpl(MessageSource messageSource) {
@@ -69,6 +69,8 @@ public class BookRepositoryImpl implements BookRepository {
         List<Book> books = findAll();
         books.removeIf(book -> book.getId().equals(id));
         writeBooksToCsv(books);
+        Locale currentLocale = ApplicationContext.getInstance().getLocale();
+        System.out.println(messageSource.getMessage("message.deleteBook", null, currentLocale));
     }
 
     // Метод для чтения данных из CSV
@@ -91,9 +93,11 @@ public class BookRepositoryImpl implements BookRepository {
     // Метод для записи данных в CSV
     private void writeBooksToCsv(List<Book> books) {
 
+        Locale currentLocale = ApplicationContext.getInstance().getLocale();
+
         // Проверка на пустой список книг
         if (books == null || books.isEmpty()) {
-            System.out.println(messageSource.getMessage("message.listEmptyBooks", null, locale));
+            System.out.println(messageSource.getMessage("message.listEmptyBooks", null, currentLocale));
 
             return;
         }
@@ -119,10 +123,10 @@ public class BookRepositoryImpl implements BookRepository {
 
             // Записываем данные в файл (в режиме добавления)
             csvMapper.writer(schema).writeValue(csvFile, books);
-            System.out.println(messageSource.getMessage("message.dataRecorded", null, locale) + CSV_FILE_PATH + ".");
+            System.out.println(messageSource.getMessage("message.dataRecorded", null, currentLocale) + CSV_FILE_PATH + ".");
 
         } catch (IOException e) {
-            System.out.println(messageSource.getMessage("message.dataRecordedError", null, locale) + e.getMessage());
+            System.out.println(messageSource.getMessage("message.dataRecordedError", null, currentLocale) + e.getMessage());
 
         }
     }
