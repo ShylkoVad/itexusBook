@@ -2,6 +2,10 @@ package com.itexus.controller;
 
 import com.itexus.domain.Book;
 import com.itexus.service.BookService;
+import com.itexus.util.ApplicationContext;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -9,16 +13,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
+@Getter
+@Setter
+@Data
 @Controller
 public class BookController {
     private final BookService bookService;
     private final MessageSource messageSource;
     Locale locale;
-
-    public BookController(BookService bookService, MessageSource messageSource) {
-        this.bookService = bookService;
-        this.messageSource = messageSource;
-    }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -31,6 +33,10 @@ public class BookController {
         } else {
             locale = Locale.forLanguageTag("en");
         }
+
+        // Устанавливаем локаль в глобальный контекст
+        ApplicationContext.getInstance().setLocale(locale);
+
         System.out.println(messageSource.getMessage("welcome.message", null, locale));
 
         while (true) {
