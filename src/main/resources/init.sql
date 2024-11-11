@@ -35,7 +35,7 @@ CREATE TABLE book_genres (
                        PRIMARY KEY (book_id, genre_id)
 );
 
-
+-- Вставка авторов
 INSERT INTO authors (name, surname, birth_date) VALUES ('Михаил', 'Булгаков', '2000-01-01');
 INSERT INTO authors (name, surname, birth_date) VALUES ('В.С.', 'Короткевич', '2002-02-02');
 
@@ -45,8 +45,14 @@ INSERT INTO genres (name) VALUES ('Стихи');
 INSERT INTO genres (name) VALUES ('Фантастика');
 
 -- Вставка книг
-INSERT INTO books (title, description, published_date) VALUES ('Мастер и маргарита', 'Загадочное и остроумное «Евангелие от Сатаны». Роман, уникальный в российской литературе ХХ столетия.', '2022-11-11');
-INSERT INTO books (title, description, published_date) VALUES ('Колосья под серпом твоим', 'В романе создана широкая панорама жизни народа в переломный для Беларуси период.', '2024-02-04');
+INSERT INTO books (title, description, published_date) VALUES ('Мастер и маргарита',
+                                                               'Загадочное и остроумное «Евангелие от Сатаны». ' ||
+                                                               'Роман, уникальный в российской литературе ХХ столетия.',
+                                                               '2022-11-11');
+INSERT INTO books (title, description, published_date) VALUES ('Колосья под серпом твоим',
+                                                               'В романе создана широкая панорама жизни народа ' ||
+                                                               'в переломный для Беларуси период.',
+                                                               '2024-02-04');
 
 -- Вставка связей между книгами и авторами
 INSERT INTO book_authors (book_id, author_id) VALUES (1, 1); -- Книга 1 с Автором 1
