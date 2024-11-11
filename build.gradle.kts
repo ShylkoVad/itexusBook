@@ -27,6 +27,12 @@ dependencies {
     implementation("org.aspectj:aspectjweaver:1.9.22") // зависимость AspectJ
     implementation("org.aspectj:aspectjrt:1.9.22.1") // зависимость на AspectJ Runtime
 
+    implementation("org.springframework:spring-context:6.1.14")
+    implementation("org.postgresql:postgresql:42.7.4") // для добавления зависимости PostgreSQL JDBC драйвера
+    implementation("org.apache.commons:commons-dbcp2:2.12.0") // добавляет зависимость Apache Commons DBCP
+    implementation("org.springframework:spring-jdbc:6.1.14") // обеспечивает простое и удобное взаимодействие с базами данных с использованием JDBC
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
+
 }
 
 tasks.test {
