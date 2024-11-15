@@ -45,4 +45,10 @@ public class AuthorRepository {
         String sql = "DELETE FROM authors WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
+    public List<Author> findAuthorsByBookId(Long bookId) {
+        String sql = "SELECT a.* FROM authors a " +
+                "JOIN book_authors ba ON a.id = ba.author_id " +
+                "WHERE ba.book_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{bookId}, authorRowMapper);
+    }
 }
