@@ -2,6 +2,7 @@ package com.itexus.repository;
 
 import com.itexus.domain.Book;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -33,7 +34,11 @@ public class BookRepository {
 
     public Book findById(Long id) {
         String sql = "SELECT * FROM books WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, bookRowMapper);
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{id}, bookRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Возвращаем null, чтобы обработать это на уровне сервиса
+        }
     }
 
     public Long save(Book book) {
