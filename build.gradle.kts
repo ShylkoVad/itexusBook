@@ -23,7 +23,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2") // для добавления зависимости на библиотеку Jackson Dataformat для работы с CSV файлами
     implementation("org.springframework:spring-aop:6.1.13") // зависимость для AOP
     implementation("org.slf4j:slf4j-api:2.0.16") // зависимость для логирования с использованием SLF4J
-    implementation("ch.qos.logback:logback-classic:1.5.8") // реализация для SLF4J
+    implementation("ch.qos.logback:logback-classic:1.5.12") // реализация для SLF4J
     implementation("org.aspectj:aspectjweaver:1.9.22") // зависимость AspectJ
     implementation("org.aspectj:aspectjrt:1.9.22.1") // зависимость на AspectJ Runtime
 
@@ -33,6 +33,7 @@ dependencies {
     implementation("org.springframework:spring-jdbc:6.1.14") // обеспечивает простое и удобное взаимодействие с базами данных с использованием JDBC
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 
+    implementation("org.slf4j:slf4j-api:2.1.0-alpha1") // SLF4J API
 }
 
 tasks.test {
