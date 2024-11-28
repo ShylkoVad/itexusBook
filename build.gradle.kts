@@ -34,6 +34,8 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 
     implementation("org.slf4j:slf4j-api:2.1.0-alpha1") // SLF4J API
+
+    implementation("org.hibernate:hibernate-core:7.0.0.Beta2") // Hibernate Core
 }
 
 tasks.test {
