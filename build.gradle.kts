@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation("org.projectlombok:lombok:1.18.34") // добавление зависимостей lombok
-    annotationProcessor ("org.projectlombok:lombok:1.18.34") // для обработки аннотаций
+    annotationProcessor("org.projectlombok:lombok:1.18.34") // для обработки аннотаций
     testImplementation(platform("org.junit:junit-bom:5.9.1")) // управление версиями зависимостей, связанных с JUnit, с помощью BOM, что позволяет определить, какие версии различных библиотек следует использовать, чтобы они были совместимыми друг с другом
     testImplementation("org.junit.jupiter:junit-jupiter") // добавление зависимости для написания и запуска тестов в Java
     testImplementation("junit:junit:4.13.2") // добавления библиотеки JUnit, для написания и выполнения автоматизированных тестов на Java
@@ -36,6 +36,8 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.1.0-alpha1") // SLF4J API
 
     implementation("org.hibernate:hibernate-core:7.0.0.Beta2") // Hibernate Core
+    implementation("org.hibernate:hibernate-entitymanager:5.3.36.Final")
+    implementation("org.apache.commons:commons-dbcp2:2.12.0")
 }
 
 tasks.test {
