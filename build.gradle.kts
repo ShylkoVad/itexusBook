@@ -15,7 +15,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1")) // управление версиями зависимостей, связанных с JUnit, с помощью BOM, что позволяет определить, какие версии различных библиотек следует использовать, чтобы они были совместимыми друг с другом
     testImplementation("org.junit.jupiter:junit-jupiter") // добавление зависимости для написания и запуска тестов в Java
     testImplementation("junit:junit:4.13.2") // добавления библиотеки JUnit, для написания и выполнения автоматизированных тестов на Java
-    implementation("org.springframework:spring-context:6.1.12") // добавление зависимости на библиотеку Spring Context,
+    implementation("org.springframework:spring-context:6.1.14") // добавление зависимости на библиотеку Spring Context,
     implementation("org.springframework:spring-core:6.1.12") // добавление зависимости на библиотеку Spring Core
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2") // основной модуль для сериализации и десериализации JSON
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2") // содержит аннотации, такие как @JsonProperty, которые можно использовать в коде для управления сериализацией и десериализацией
@@ -27,7 +27,6 @@ dependencies {
     implementation("org.aspectj:aspectjweaver:1.9.22") // зависимость AspectJ
     implementation("org.aspectj:aspectjrt:1.9.22.1") // зависимость на AspectJ Runtime
 
-    implementation("org.springframework:spring-context:6.1.14")
     implementation("org.postgresql:postgresql:42.7.4") // для добавления зависимости PostgreSQL JDBC драйвера
     implementation("org.apache.commons:commons-dbcp2:2.12.0") // добавляет зависимость Apache Commons DBCP
     implementation("org.springframework:spring-jdbc:6.1.14") // обеспечивает простое и удобное взаимодействие с базами данных с использованием JDBC
