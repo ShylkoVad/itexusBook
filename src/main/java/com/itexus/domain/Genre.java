@@ -1,17 +1,25 @@
 package com.itexus.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+import java.util.Set;
+
+@Entity
+@Table(name = "genres")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Genre {
-    private Long id;
+public class Genre extends BaseEntity {
+
+    @Column(name = "name")
     private String name;
+
+    @ManyToMany(mappedBy = "genres")
+    private Set<Book> books;
 }

@@ -1,21 +1,29 @@
 package com.itexus.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-@Getter
-@Setter
+@Entity
+@Table (name = "authors")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Author {
-    private Long id;
+public class Author extends BaseEntity {
+    @Column(name = "name")
     private String name;
+    @Column(name = "surname")
     private String surname;
+    @Column(name = "birth_date")
     private LocalDate birthDate;
+
+    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books;
 }

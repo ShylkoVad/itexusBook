@@ -1,29 +1,42 @@
 package com.itexus.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
-import java.sql.Date;
-import java.util.List;
+import java.util.Set;
 
-@Getter
-@Setter
+@Entity
+@Table(name = "books")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
-    private Long id;
+public class Book extends BaseEntity {
+    @Column(name = "title")
     private String title;
+    @Column(name = "description")
     private String description;
+    @Column(name = "published_date")
     private LocalDate publishedDate;
-    private List<Long> authorIds; // Для хранения ID авторов
-    private List<Long> genreIds;   // Для хранения ID жанров
 
+    @ManyToMany
+    @JoinTable(
+            name = "book_authors",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    private Set<Author> authors;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "book_genres",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
 }
