@@ -5,7 +5,6 @@ import com.itexus.repository.BookRepository;
 import com.itexus.service.BookService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class BookServiceImpl implements BookService {
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
+
     @Override
     public Book findById(Long id) {
         return bookRepository.findById(id);

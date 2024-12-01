@@ -18,6 +18,7 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorServiceImpl(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
     }
+
     @Override
     public Author findById(Long id) {
         return authorRepository.findById(id);

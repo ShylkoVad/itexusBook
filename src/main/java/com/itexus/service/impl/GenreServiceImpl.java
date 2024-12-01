@@ -5,7 +5,6 @@ import com.itexus.repository.GenreRepository;
 import com.itexus.service.GenreService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ public class GenreServiceImpl implements GenreService {
     public GenreServiceImpl(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
     }
+
     @Override
     public Genre findById(Long id) {
         return genreRepository.findById(id);
