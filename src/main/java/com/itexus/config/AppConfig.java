@@ -9,6 +9,7 @@ import com.itexus.service.GenreService;
 import com.itexus.service.impl.AuthorServiceImpl;
 import com.itexus.service.impl.BookServiceImpl;
 import com.itexus.service.impl.GenreServiceImpl;
+import org.hibernate.SessionFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,13 +17,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 @ComponentScan(basePackages = "com.itexus")
 @EnableAspectJAutoProxy
-@Import(DatabaseConfig.class) // Импортирую класс DatabaseConfig
+@Import(HibernateConfig.class) // Импорт класса HibernateConfig
 public class AppConfig {
+
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -32,8 +33,8 @@ public class AppConfig {
     }
 
     @Bean
-    public BookRepository bookRepository(JdbcTemplate jdbcTemplate) {
-        return new BookRepository(jdbcTemplate);
+    public BookRepository bookRepository(SessionFactory sessionFactory) {
+        return new BookRepository(sessionFactory);
     }
 
     @Bean
@@ -42,8 +43,8 @@ public class AppConfig {
     }
 
     @Bean
-    public AuthorRepository authorRepository(JdbcTemplate jdbcTemplate) {
-        return new AuthorRepository(jdbcTemplate);
+    public AuthorRepository authorRepository(SessionFactory sessionFactory) {
+        return new AuthorRepository(sessionFactory);
     }
 
     @Bean
@@ -52,8 +53,8 @@ public class AppConfig {
     }
 
     @Bean
-    public GenreRepository genreRepository(JdbcTemplate jdbcTemplate) {
-        return new GenreRepository(jdbcTemplate);
+    public GenreRepository genreRepository(SessionFactory sessionFactory) {
+        return new GenreRepository(sessionFactory);
     }
 
     @Bean
