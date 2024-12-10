@@ -1,45 +1,65 @@
 package com.itexus.repository;
 
 import com.itexus.domain.Genre;
-import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-@Primary
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GenreRepository {
-    private final JdbcTemplate jdbcTemplate;
 
-    public GenreRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    private final RowMapper<Genre> genreRowMapper = (rs, rowNum) -> {
-        Genre genre = new Genre();
-        genre.setId(rs.getLong("id"));
-        genre.setName(rs.getString("name"));
-        return genre;
-    };
+    // Метод для получения жанров по id
     public Genre findById(Long id) {
-        String sql = "SELECT * FROM genres WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, genreRowMapper);
+        Genre genre;
+        Session session = sessionFactory.openSession();
+        genre = session.get(Genre.class, id); // Получаем объект Genre по ID
+        return genre; // Вернуть найденный
     }
 
+    // Метод для получения всех жанров
     public List<Genre> findAll() {
-        String sql = "SELECT * FROM genres";
-        return jdbcTemplate.query(sql, genreRowMapper);
+        List<Genre> genres;
+        Session session = sessionFactory.openSession();
+        Query<Genre> query = session.createQuery("FROM Genre", Genre.class); // Создаем запрос для получения всех жанров
+        genres = query.list(); // Получаем список жанров
+        return genres; // Возвращаем список жанров
     }
 
+    // Метод для сохранения жанра
     public void save(Genre genre) {
-        String sql = "INSERT INTO genres (name) VALUES (?)";
-        jdbcTemplate.update(sql, genre.getName());
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction();
+        session.persist(genre); // Сохраняем объект Genre в базе данных
+        transaction.commit();
     }
 
+    // Метод удаления жанра
     public void delete(Long id) {
-        String sql = "DELETE FROM genres WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction();
+        // Загружаем объект Genre по его ID
+        Genre genre = session.get(Genre.class, id);
+        if (genre != null) { // Проверяем, найден ли жанр
+            session.remove(genre); // Удаляем жанр
+            transaction.commit();
+        } else {
+            System.out.println("Genre with ID " + id + " not found."); // Информируем если не найден
+        }
     }
 }

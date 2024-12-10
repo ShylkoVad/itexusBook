@@ -1,68 +1,114 @@
 package com.itexus.repository;
 
+import com.itexus.domain.Author;
 import com.itexus.domain.Book;
+import com.itexus.domain.Genre;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 @Primary
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookRepository {
-    private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> {
-        Book book = new Book();
-        book.setId(rs.getLong("id"));
-        book.setTitle(rs.getString("title"));
-        book.setDescription(rs.getString("description"));
-        book.setPublishedDate(rs.getDate("published_date").toLocalDate());
-        return book;
-    };
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public BookRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
+    // Метод для получения всех книг
     public List<Book> findAll() {
-        String sql = "SELECT * FROM books";
-        return jdbcTemplate.query(sql, bookRowMapper);
+        Session session = sessionFactory.openSession();
+        List<Book> book = session.createQuery("FROM Book", Book.class).list();
+        return book;
     }
 
+    // Метод для получения книги по id
     public Book findById(Long id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
-        try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{id}, bookRowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            return null; // Возвращаем null, чтобы обработать это на уровне сервиса
+        Session session = sessionFactory.openSession();
+        // Получение книги по ID
+        Book book = session.get(Book.class, id);
+        return book; // Возвращаем найденную книгу (null, если не найдена)
+    }
+
+    // Метод для сохранения книг
+    public Long save(Book book) {
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        // Сохраняем объект книги
+        session.persist(book); // Сохраняем книгу
+        transaction.commit(); // Подтверждаем транзакцию
+        // Получаем сгенерированный ID через геттер
+        return book.getId(); // Возвращаем сгенерированный ID
+    }
+
+    // Метод обновления книг
+    public void update(Book book) {
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        // Обновляем объект книги
+        session.merge(book); // Используйте merge вместо update
+        transaction.commit(); // Подтверждаем транзакцию
+    }
+
+    // Метод удаления книг
+    public void delete(Long id) {
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        // Находим объект книги по ID
+        Book book = session.get(Book.class, id);
+        if (book != null) {
+            session.remove(book); // Удаляем книгу
+            transaction.commit(); // Подтверждаем транзакцию
         }
     }
 
-    public Long save(Book book) {
-        String sql = "INSERT INTO books (title, description, published_date) VALUES (?, ?, ?) RETURNING id";
-        return jdbcTemplate.queryForObject(sql, new Object[]{book.getTitle(), book.getDescription(), book.getPublishedDate()}, Long.class);
-    }
-
-    public void update(Book book) {
-        String sql = "UPDATE books SET title = ?, description = ?, published_date = ? WHERE id = ?";
-        jdbcTemplate.update(sql, book.getTitle(), book.getDescription(), book.getPublishedDate(), book.getId());
-    }
-
-    public void delete(Long id) {
-        String sql = "DELETE FROM books WHERE id = ?";
-        jdbcTemplate.update(sql, id);
-    }
-
+    // Метод получения автора по id книги
     public void addAuthorToBook(Long bookId, Long authorId) {
-        String sql = "INSERT INTO book_authors (book_id, author_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, bookId, authorId);
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        // Загружаем книгу по ID
+        Book book = session.get(Book.class, bookId);
+        // Загружаем автора по ID
+        Author author = session.get(Author.class, authorId);
+        if (book != null && author != null) {
+            // Добавляем автора к книге
+            book.getAuthors().add(author); // Добавляем автора к книге
+            author.getBooks().add(book); // Добавляем книгу к автору
+            session.merge(book);  // Обновляем книгу
+            session.merge(author); // Обновляем автора
+        }
+        transaction.commit(); // Подтверждаем транзакцию
     }
 
+    // Метод получения жанра по id книги
     public void addGenreToBook(Long bookId, Long genreId) {
-        String sql = "INSERT INTO book_genres (book_id, genre_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, bookId, genreId);
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+
+        Book book = session.get(Book.class, bookId); // Загружаем книгу по ID
+        Genre genre = session.get(Genre.class, genreId);  // Загружаем жанр по ID
+
+        if (book != null && genre != null) {
+            book.setGenre(genre); // Устанавливаем жанр для книги
+            genre.getBooks().add(book); // Добавляем книгу к жанру
+            session.merge(book); // Обновляем книгу
+            session.merge(genre); // Обновляем жанр
+        }
+        transaction.commit(); // Подтверждаем транзакцию
     }
 }

@@ -1,54 +1,81 @@
 package com.itexus.repository;
 
 import com.itexus.domain.Author;
-import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
-@Primary
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthorRepository {
-    private final JdbcTemplate jdbcTemplate;
 
-    public AuthorRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    private final RowMapper<Author> authorRowMapper = (rs, rowNum) -> {
-        Author author = new Author();
-        author.setId(rs.getLong("id"));
-        author.setName(rs.getString("name"));
-        author.setSurname(rs.getString("surname"));
-        author.setBirthDate(rs.getDate("birth_date").toLocalDate());
-        return author;
-    };
 
+    // Метод для получения автора по id
     public Author findById(Long id) {
-        String sql = "SELECT * FROM authors WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, authorRowMapper);
+        // Проверяем, если идентификатор не null
+        if (id == null) {
+            return null;
+        }
+        Session session = sessionFactory.openSession();
+        // Загружаем автора по ID
+        return session.get(Author.class, id);
     }
 
+    // Метод для получения всех авторов
     public List<Author> findAll() {
-        String sql = "SELECT * FROM authors";
-        return jdbcTemplate.query(sql, authorRowMapper);
+        Session session = sessionFactory.openSession();
+        return session.createQuery("FROM Author", Author.class).list();
     }
 
+    // Метод для сохранения жанра
     public void save(Author author) {
-        String sql = "INSERT INTO authors (name, surname, birth_date) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, author.getName(), author.getSurname(), author.getBirthDate());
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        session.persist(author); // Сохраняем объект автора в базе данных
+        transaction.commit(); // Подтверждаем транзакцию
     }
 
+    // Метод удаления жанра
     public void delete(Long id) {
-        String sql = "DELETE FROM authors WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        Transaction transaction;
+        Session session = sessionFactory.openSession();
+        transaction = session.beginTransaction(); // Начинаем транзакцию
+        // Загружаем автор по его ID
+        Author author = session.get(Author.class, id);
+        if (author != null) { // Проверяем, найден ли автор
+            session.remove(author); // Удаляем автора
+            transaction.commit(); // Подтверждаем транзакцию
+        } else {
+            System.out.println("Author with ID " + id + " not found.");
+        }
     }
+
+    // Метод получения всех авторов по id книги
     public List<Author> findAuthorsByBookId(Long bookId) {
-        String sql = "SELECT a.* FROM authors a " +
-                "JOIN book_authors ba ON a.id = ba.author_id " +
-                "WHERE ba.book_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{bookId}, authorRowMapper);
+        if (bookId == null) {
+            return Collections.emptyList(); // Возвращаем пустой список, если bookId равен null
+        }
+        Session session = sessionFactory.openSession();
+        // Используем HQL для получения авторов по идентификатору книги
+        String hql = "SELECT a FROM Author a JOIN a.books b WHERE b.id = :bookId";
+        Query<Author> query = session.createQuery(hql, Author.class);
+        query.setParameter("bookId", bookId);
+
+        return query.getResultList(); // Возвращаем список авторов
     }
 }
