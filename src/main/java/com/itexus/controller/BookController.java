@@ -2,8 +2,10 @@ package com.itexus.controller;
 
 import com.itexus.domain.Author;
 import com.itexus.domain.Book;
+import com.itexus.domain.Genre;
 import com.itexus.service.AuthorService;
 import com.itexus.service.BookService;
+import com.itexus.service.GenreService;
 import com.itexus.util.ApplicationContext;
 import lombok.Data;
 import lombok.Getter;
@@ -13,9 +15,11 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -27,6 +31,7 @@ public class BookController {
     private final MessageSource messageSource; // Источник сообщений для локализации
     private Locale locale; // Локаль для сообщений
     private final AuthorService authorService; // Сервис для управления авторами
+    private final GenreService genreService; // Сервис для управления жанрами
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -77,13 +82,18 @@ public class BookController {
 
     // Отображение меню
     private void displayMenu() {
-        System.out.println(messageSource.getMessage("option.select", null, locale));
-        System.out.println(messageSource.getMessage("findAllBooks", null, locale));
-        System.out.println(messageSource.getMessage("saveBook", null, locale));
-        System.out.println(messageSource.getMessage("updateBook", null, locale));
-        System.out.println(messageSource.getMessage("deleteBook", null, locale));
-        System.out.println(messageSource.getMessage("findByIdBook", null, locale));
-        System.out.println(messageSource.getMessage("exit", null, locale));
+        List<String> menuOptions = Arrays.asList(
+                "option.select",
+                "findAllBooks",
+                "saveBook",
+                "updateBook",
+                "deleteBook",
+                "findByIdBook",
+                "exit"
+        );
+        for (String option : menuOptions) {
+            System.out.println(messageSource.getMessage(option, null, locale));
+        }
     }
 
     // Получение всех книг
@@ -92,20 +102,24 @@ public class BookController {
         if (books.isEmpty()) {
             System.out.println(messageSource.getMessage("message.listEmpty", null, locale));
         } else {
-            System.out.printf("%-5s | %-30s | %-50s | %-15s%n", "ID", "Title", "Description", "Published Date", "Author");
+            System.out.printf("%-5s | %-30s | %-50s | %-15s | %-30s | %-30s%n", "ID", "Title", "Description", "Published Date", "Authors", "Genre");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------");
             for (Book book : books) {
 
-                // Получаем авторов для текущей книги
-                List<Author> authors = authorService.findAuthorsByBookId(book.getId());
+                List<Author> authors = authorService.findAuthorsByBookId(book.getId()); // Получаем авторов для текущей книги
 
                 // Формируем строку с именами авторов
-                StringBuilder authorsNames = new StringBuilder();
-                authors.forEach(author -> authorsNames.append(author.getName()).append(" ").append(author.getSurname()));
+                String authorsNames = authors.stream()
+                        .map(author -> author.getName() + " " + author.getSurname())
+                        .collect(Collectors.joining(", "));
 
-                // Выводим данные о книге и авторах
-                System.out.printf("%-5d | %-30s | %-50s | %-15s | %-30s%n",
-                        book.getId(), book.getTitle(), book.getDescription(), book.getPublishedDate(), authorsNames);
+                // Получение жанра текущей книги
+                Genre genre = book.getGenre();
+                String genreName = (genre != null) ? genre.getName() : "No genre"; // Если жанр отсутствует
+
+                // Выводим данные о книге, авторах и жанре
+                System.out.printf("%-5d | %-30s | %-50s | %-15s | %-30s | %-30s%n",
+                        book.getId(), book.getTitle(), book.getDescription(), book.getPublishedDate(), authorsNames, genreName);
             }
         }
     }
@@ -124,29 +138,21 @@ public class BookController {
         String authorIdsInput = scanner.nextLine();
         List<Long> authorIds = parseIds(authorIdsInput);
 
-        System.out.println(messageSource.getMessage("input.genre.ids", null, locale)); // Добавить ввод жанров
-        String genreIdsInput = scanner.nextLine();
-        List<Long> genreIds = parseIds(genreIdsInput);
+        System.out.println(messageSource.getMessage("input.genre.ids", null, locale));
+        String genreIdInput = scanner.nextLine();
+        Long genreId = Long.valueOf(genreIdInput); // Преобразование ввода в Long
+
+        Set<Author> authors = getAuthorsByIds(new HashSet<>(authorIds)); // Получение объектов авторов
+
+        Genre genre = genreService.findById(genreId); // Поиск жанра по ID
 
         // Создание объекта книги с учетом всех полей
-        Book book = new Book(null, title, description, LocalDate.parse(publishedDate), authorIds, genreIds);
+        Book book = new Book(title, description, LocalDate.parse(publishedDate), authors, genre);
 
         // Сохранение книги через сервис и получение сгенерированного идентификатора
         Long savedBookId = bookService.save(book);
 
-        // Установка ID в объекте book, если нужно
-        book.setId(savedBookId);
-
-        // Добавление авторов и жанров к книге
-        for (Long authorId : authorIds) {
-            bookService.addAuthorToBook(book.getId(), authorId);
-        }
-
-        for (Long genreId : genreIds) {
-            bookService.addGenreToBook(book.getId(), genreId);
-        }
-
-        System.out.println(messageSource.getMessage("message.saveBook", null, locale));
+        System.out.println(messageSource.getMessage("message.saveBook", new Object[]{savedBookId}, locale));
     }
 
     // Метод для преобразования строки введенных идентификаторов в список Long
@@ -157,11 +163,17 @@ public class BookController {
                 .collect(Collectors.toList()); // Собираем в список
     }
 
-    // Обновление книги
     private void updateBook(Scanner scanner) {
         System.out.println(messageSource.getMessage("input.book.updateId", null, locale));
         Long bookId = scanner.nextLong();
         scanner.nextLine(); // Очистка буфера ввода
+
+        Book book = bookService.findById(bookId); // Находим книгу по ID
+
+        if (book == null) {
+            System.out.println(messageSource.getMessage("book.not.found", null, locale));
+            return; // Выход, если книга не найдена
+        }
 
         System.out.println(messageSource.getMessage("input.updateTitle", null, locale));
         String title = scanner.nextLine();
@@ -172,17 +184,26 @@ public class BookController {
         System.out.println(messageSource.getMessage("input.published.updateDate", null, locale));
         String publishedDate = scanner.nextLine();
 
-        System.out.println(messageSource.getMessage("input.author.updateIds", null, locale)); // Добавить ввод авторов
+        System.out.println(messageSource.getMessage("input.author.updateIds", null, locale));
         String authorIdsInput = scanner.nextLine();
         List<Long> authorIds = parseIds(authorIdsInput);
+        Set<Author> authors = getAuthorsByIds(new HashSet<>(authorIds)); // Получение объектов авторов
 
-        System.out.println(messageSource.getMessage("input.genre.updateIds", null, locale)); // Добавить ввод жанров
-        String genreIdsInput = scanner.nextLine();
-        List<Long> genreIds = parseIds(genreIdsInput);
+        System.out.println(messageSource.getMessage("input.genre.updateIds", null, locale));
+        String genreIdInput = scanner.nextLine(); // Поменять на одиночный ввод
+        Long genreId = Long.valueOf(genreIdInput); // Преобразование ввода в Long
 
-        // Обновление книги
-        Book book = new Book(bookId, title, description, LocalDate.parse(publishedDate), authorIds, genreIds);
-        bookService.update(book); // Обновление через сервис
+        Genre genre = genreService.findById(genreId); // Поиск жанра по ID
+
+        // Обновление полей книги
+        book.setTitle(title);
+        book.setDescription(description);
+        book.setPublishedDate(LocalDate.parse(publishedDate));
+        book.setAuthors(authors);
+        book.setGenre(genre); // Устанавливаем один жанр
+
+        // Обновление книги через сервис
+        bookService.update(book);
         System.out.println(messageSource.getMessage("book.updated", null, locale));
     }
 
@@ -200,20 +221,47 @@ public class BookController {
         Long bookId = scanner.nextLong();
         Book book = bookService.findById(bookId); // Поиск книги через сервис
         if (book != null) {
-            System.out.printf("%-5s | %-30s | %-50s | %-15s%n", "ID", "Title", "Description", "Published Date", "Author");
+            System.out.printf("%-5s | %-30s | %-50s | %-15s | %-30s | %-20s%n",
+                    "ID", "Title", "Description", "Published Date", "Authors", "Genre");
             System.out.println("--------------------------------------------------------------------------------------------------");
             // Получаем авторов для книги
             List<Author> authors = authorService.findAuthorsByBookId(book.getId());
 
             // Формируем строку с именами авторов
             StringBuilder authorsNames = new StringBuilder();
-            authors.forEach(author -> authorsNames.append(author.getName()).append(" ").append(author.getSurname()));
+            for (int i = 0; i < authors.size(); i++) {
+                Author author = authors.get(i);
+                authorsNames.append(author.getName()).append(" ").append(author.getSurname());
+                if (i < authors.size() - 1) {
+                    authorsNames.append(", "); // Добавляем запятую между авторами
+                }
+            }
 
-            // Выводим информацию о книге и авторах
-            System.out.printf("%-5d | %-30s | %-50s | %-15s | %-30s%n",
-                    book.getId(), book.getTitle(), book.getDescription(), book.getPublishedDate(), authorsNames.toString());
+
+            Genre genre = book.getGenre(); // Получаем жанр книги
+
+            // Выводим информацию о книге, авторах и жанре
+            System.out.printf("%-5d | %-30s | %-50s | %-15s | %-30s | %-20s%n",
+                    book.getId(),
+                    book.getTitle(),
+                    book.getDescription(),
+                    book.getPublishedDate(),
+                    authorsNames,
+                    genre != null ? genre.getName() : "N/A");
         } else {
             System.out.println(messageSource.getMessage("book.not.found", null, locale));
         }
     }
+
+    private Set<Author> getAuthorsByIds(Set<Long> authorIds) {
+        Set<Author> authors = new HashSet<>();
+        for (Long authorId : authorIds) {
+            Author author = authorService.findById(authorId); // метод поиска автора по ID
+            if (author != null) {
+                authors.add(author);
+            }
+        }
+        return authors;
+    }
+
 }
