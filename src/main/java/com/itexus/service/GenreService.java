@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface GenreService {
     Genre findById(Long id);
+
     List<Genre> findAll();
+
     void save(Genre genre);
+
     void delete(Long id);
 }
