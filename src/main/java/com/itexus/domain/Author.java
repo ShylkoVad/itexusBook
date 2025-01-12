@@ -6,14 +6,16 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Table (name = "authors")
+@Table(name = "authors")
 @Data
+@EqualsAndHashCode(callSuper = true) // Добавлено для вызова методов суперкласса
 @AllArgsConstructor
 @NoArgsConstructor
 public class Author extends BaseEntity {
