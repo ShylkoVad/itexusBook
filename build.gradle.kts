@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot") version "3.4.1" // версия Spring Boot
     id("io.spring.dependency-management") version "1.1.7" // для управления зависимостями
+    id("com.github.ben-manes.versions") version "0.51.0" // Плагин для проверки обновлений зависимостей
     id("java")
 }
 
@@ -12,11 +13,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.34") // добавление зависимостей lombok
-    annotationProcessor("org.projectlombok:lombok:1.18.34") // для обработки аннотаций
-    testImplementation(platform("org.junit:junit-bom:5.9.1")) // управление версиями зависимостей, связанных с JUnit, с помощью BOM, что позволяет определить, какие версии различных библиотек следует использовать, чтобы они были совместимыми друг с другом
+    implementation("org.projectlombok:lombok:1.18.36") // добавление зависимостей lombok
+    annotationProcessor("org.projectlombok:lombok:1.18.36") // для обработки аннотаций
+    implementation("org.junit:junit-bom:5.11.4") // управление версиями зависимостей, связанных с JUnit, с помощью BOM, что позволяет определить, какие версии различных библиотек следует использовать, чтобы они были совместимыми друг с другом
     testImplementation("org.junit.jupiter:junit-jupiter") // добавление зависимости для написания и запуска тестов в Java
-    testImplementation("junit:junit:4.13.2") // добавления библиотеки JUnit, для написания и выполнения автоматизированных тестов на Java
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
