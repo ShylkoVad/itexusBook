@@ -24,6 +24,10 @@ dependencies {
     implementation("org.hibernate:hibernate-core:7.0.0.Beta3")  // Hibernate Core
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
