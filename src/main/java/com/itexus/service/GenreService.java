@@ -1,6 +1,5 @@
 package com.itexus.service;
 
-import com.itexus.dto.BookDTO;
 import com.itexus.dto.GenreDTO;
 
 import java.util.List;
