@@ -1,15 +1,18 @@
 package com.itexus.service;
 
-import com.itexus.domain.Genre;
+import com.itexus.dto.BookDTO;
+import com.itexus.dto.GenreDTO;
 
 import java.util.List;
 
 public interface GenreService {
-    Genre findById(Long id);
+    GenreDTO findByIdGenre(Long id);
 
-    List<Genre> findAll();
+    List<GenreDTO> findAllGenres();
 
-    void save(Genre genre);
+    GenreDTO saveGenre(GenreDTO genreDTO);
 
-    void delete(Long id);
+    void deleteGenre(Long id);
+
+    GenreDTO updateGenre(GenreDTO genreDTO);
 }
