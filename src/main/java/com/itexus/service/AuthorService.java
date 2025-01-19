@@ -1,17 +1,19 @@
 package com.itexus.service;
 
-import com.itexus.domain.Author;
+import com.itexus.dto.AuthorDTO;
 
 import java.util.List;
 
 public interface AuthorService {
-    Author findById(Long id);
+    AuthorDTO findByIdAuthor(Long id);
 
-    List<Author> findAll();
+    List<AuthorDTO> findAllAuthors();
 
-    void save(Author author);
+    AuthorDTO saveAuthor(AuthorDTO authorDTO);
 
-    void delete(Long id);
+    void deleteAuthor(Long id);
 
-    List<Author> findAuthorsByBookId(Long bookId);
+    AuthorDTO updateAuthor(AuthorDTO authorDTO);
+
+    List<AuthorDTO> findAuthorsByBookId(Long bookId);
 }
