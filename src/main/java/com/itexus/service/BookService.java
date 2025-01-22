@@ -1,21 +1,19 @@
 package com.itexus.service;
 
-import com.itexus.domain.Book;
+import com.itexus.dto.BookDTO;
 
 import java.util.List;
 
 public interface BookService {
-    Book findById(Long id);
+    List<BookDTO> findAllBooks();
 
-    List<Book> findAll();
+    BookDTO findByIdBook(Long id);
 
-    Long save(Book book);
+    Long saveBook(BookDTO bookDTO);
 
-    void update(Book book);
+    BookDTO updateBook(BookDTO bookDTO);
 
-    void delete(Long id);
+    void deleteBook(Long id);
 
     void addAuthorToBook(Long bookId, Long authorId);
-
-    void addGenreToBook(Long bookId, Long genreId);
 }
