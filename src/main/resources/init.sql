@@ -3,14 +3,16 @@ CREATE TABLE authors (
                        id SERIAL PRIMARY KEY,
                        name VARCHAR(255) NOT NULL,
                        surname VARCHAR(255) NOT NULL,
-                       birth_date DATE
+                       birth_date DATE,
+                       UNIQUE (name, surname)  -- Уникальное ограничение на сочетание имени и фамилии
 );
 
 
 -- Создание таблицы genres
 CREATE TABLE genres (
                        id SERIAL PRIMARY KEY,
-                       name VARCHAR(255) NOT NULL
+                       name VARCHAR(255) NOT NULL,
+                       UNIQUE (name)  -- Уникальное ограничение на имя жанра
 );
 
 -- Создание таблицы books
