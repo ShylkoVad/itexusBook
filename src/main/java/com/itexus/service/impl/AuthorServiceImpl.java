@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -60,7 +61,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorDTO> findAuthorsByBookId(Long bookId) {
-
-        return null;
+        List<Author> authors = authorRepository.findAuthorsByBookId(bookId);
+        return authors.stream()
+                .map(authorConverters::toDTO) // Используем конвертер
+                .collect(Collectors.toList());
     }
 }
