@@ -9,11 +9,10 @@ public interface BookService {
 
     BookDTO findByIdBook(Long id);
 
-    Long saveBook(BookDTO bookDTO);
+    BookDTO saveBook(BookDTO bookDTO);
 
     BookDTO updateBook(BookDTO bookDTO);
 
     void deleteBook(Long id);
 
-    void addAuthorToBook(Long bookId, Long authorId);
 }

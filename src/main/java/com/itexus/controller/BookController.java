@@ -3,6 +3,7 @@ package com.itexus.controller;
 import com.itexus.dto.BookDTO;
 import com.itexus.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +40,12 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<BookDTO> saveBook(@RequestBody BookDTO bookDTO) {
-
-        return null;
+        return new ResponseEntity<>(bookService.saveBook(bookDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
-
-        return null;
+    @PutMapping
+    public ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO bookDTO) {
+        return new ResponseEntity<>(bookService.updateBook(bookDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
