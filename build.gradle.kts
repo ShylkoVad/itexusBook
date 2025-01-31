@@ -24,6 +24,8 @@ dependencies {
     implementation("org.hibernate:hibernate-core:7.0.0.Beta3")  // Hibernate Core
 
     implementation("org.mongodb:mongodb-driver-sync:5.3.1") // для mongoDB
+    implementation("org.mongodb:mongodb-driver-core:5.3.1")
+
 }
 
 tasks.withType<JavaCompile> {
