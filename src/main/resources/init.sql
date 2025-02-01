@@ -21,7 +21,8 @@ CREATE TABLE books (
                        title VARCHAR(255) NOT NULL,
                        description VARCHAR(5000),
                        published_date DATE,
-                       genre_id INT REFERENCES genres(id)
+                       genre_id INT REFERENCES genres(id),
+                       image_id VARCHAR(255) DEFAULT NULL  -- Добавляем поле для хранения ID изображения в GridFS, по умолчанию NULL
 );
 
 -- Создание таблицы book_authors (Связь между книгами и авторами)
@@ -41,14 +42,14 @@ INSERT INTO genres (name) VALUES ('Стихи');
 INSERT INTO genres (name) VALUES ('Фантастика');
 
 -- Вставка книг
-INSERT INTO books (title, description, published_date, genre_id) VALUES ('Мастер и маргарита',
+INSERT INTO books (title, description, published_date, genre_id, image_id) VALUES ('Мастер и маргарита',
                                                                'Загадочное и остроумное «Евангелие от Сатаны». ' ||
                                                                'Роман, уникальный в российской литературе ХХ столетия.',
-                                                               '2022-11-11', 1);
-INSERT INTO books (title, description, published_date, genre_id) VALUES ('Колосья под серпом твоим',
+                                                               '2022-11-11', 1, NULL);
+INSERT INTO books (title, description, published_date, genre_id, image_id) VALUES ('Колосья под серпом твоим',
                                                                'В романе создана широкая панорама жизни народа ' ||
                                                                'в переломный для Беларуси период.',
-                                                               '2024-02-04', 1);
+                                                               '2024-02-04', 1, NULL);
 
 -- Вставка связей между книгами и авторами
 INSERT INTO book_authors (book_id, author_id) VALUES (1, 1); -- Книга 1 с Автором 1
