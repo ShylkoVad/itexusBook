@@ -50,4 +50,7 @@ public class Book extends BaseEntity {
     @JoinColumn(name = "genre_id") // Указываем, что это внешний ключ для жанра
     private Genre genre; // теперь жанр является одним из полей книги
 
+    @Column(name = "image_id") // Поле для хранения ID изображения в GridFS
+    private String imageId;
+
 }
