@@ -19,4 +19,5 @@ public class BookDTO {
     private LocalDate publishedDate;
     private GenreDTO genre; // Если хотим передавать информацию о жанре
     private List<AuthorDTO> authors; // Список авторов
+    private String imageId; // Это поле может быть null или пустым
 }
