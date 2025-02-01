@@ -13,6 +13,17 @@ spring:
     properties:
       current_session_context_class: thread  # Контекст сессии
 
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/Books_library
+      database: Books_library
+
+  servlet:
+    multipart:
+      max-file-size: 1000MB  # Установил максимальный размер файла
+      max-request-size: 1000MB  # Установил максимальный размер запроса
+
+
 # Дополнительные настройки
 logging:
   level:
