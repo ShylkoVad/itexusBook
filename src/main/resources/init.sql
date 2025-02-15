@@ -32,6 +32,37 @@ CREATE TABLE book_authors (
                        PRIMARY KEY (book_id, author_id)
 );
 
+-- Создание таблицы users
+CREATE TABLE users (
+                       id SERIAL PRIMARY KEY,
+                       username VARCHAR(50) NOT NULL,
+                       password VARCHAR(255) NOT NULL,
+                       email VARCHAR(100)
+);
+
+-- Создание таблицы roles
+CREATE TABLE roles (
+                       id SERIAL PRIMARY KEY,
+                       name VARCHAR(50) NOT NULL
+);
+
+-- Создание таблицы users_roles
+CREATE TABLE users_roles (
+                             user_id INT NOT NULL,
+                             role_id INT NOT NULL,
+                             PRIMARY KEY (user_id, role_id),
+                             FOREIGN KEY (user_id) REFERENCES users(id),
+                             FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+-- Создание таблицы tokens
+CREATE TABLE tokens (
+                        id SERIAL PRIMARY KEY,
+                        token VARCHAR(255) NOT NULL,
+                        user_id INT NOT NULL,
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Вставка авторов
 INSERT INTO authors (name, surname, birth_date) VALUES ('Михаил', 'Булгаков', '2000-01-01');
 INSERT INTO authors (name, surname, birth_date) VALUES ('В.С.', 'Короткевич', '2002-02-02');
@@ -54,3 +85,7 @@ INSERT INTO books (title, description, published_date, genre_id, image_id) VALUE
 -- Вставка связей между книгами и авторами
 INSERT INTO book_authors (book_id, author_id) VALUES (1, 1); -- Книга 1 с Автором 1
 INSERT INTO book_authors (book_id, author_id) VALUES (2, 2); -- Книга 2 с Автором 2
+
+-- Вставка ролей
+INSERT INTO roles(name) VALUES ('ADMIN');
+INSERT INTO roles(name) VALUES ('USER');
