@@ -27,6 +27,9 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-logging")  // Spring Boot Starter для логирования
     implementation("org.slf4j:slf4j-api:2.1.0-alpha1") // SLF4J API
+
+    implementation("org.springframework.boot:spring-boot-starter-security:3.4.2")
+    implementation("org.springframework.security:spring-security-test:6.4.2")
 }
 
 tasks.withType<JavaCompile> {
