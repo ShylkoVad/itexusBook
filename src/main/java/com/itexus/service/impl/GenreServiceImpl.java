@@ -6,6 +6,7 @@ import com.itexus.dto.converters.GenreConverters;
 import com.itexus.repository.GenreRepository;
 import com.itexus.service.GenreService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,14 +14,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
     private final GenreConverters genreConverters;
-
-    public GenreServiceImpl(GenreRepository genreRepository, GenreConverters genreConverters) {
-        this.genreRepository = genreRepository;
-        this.genreConverters = genreConverters;
-    }
 
     @Override
     public List<GenreDTO> findAllGenres() {

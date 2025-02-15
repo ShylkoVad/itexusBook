@@ -6,6 +6,7 @@ import com.itexus.dto.converters.AuthorConverters;
 import com.itexus.repository.AuthorRepository;
 import com.itexus.service.AuthorService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,15 +15,11 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service
+@AllArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorConverters authorConverters;
-
-    public AuthorServiceImpl(AuthorRepository authorRepository, AuthorConverters authorConverters) {
-        this.authorRepository = authorRepository;
-        this.authorConverters = authorConverters;
-    }
 
     @Override
     public AuthorDTO findByIdAuthor(Long id) {

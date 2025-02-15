@@ -13,6 +13,7 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +28,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookConverters bookConverters;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
     private final GridFSBucket gridFSBucket; // Для работы с GridFS
-
-    public BookServiceImpl(BookRepository bookRepository, BookConverters bookConverters, AuthorRepository authorRepository,
-                           GenreRepository genreRepository, GridFSBucket gridFSBucket) {
-        this.bookRepository = bookRepository;
-        this.bookConverters = bookConverters;
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
-        this.gridFSBucket = gridFSBucket;
-    }
 
     @Override
     public List<BookDTO> findAllBooks() {

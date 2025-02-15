@@ -7,6 +7,7 @@ import com.itexus.dto.BookDTO;
 import com.itexus.repository.AuthorRepository;
 import com.itexus.repository.GenreRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,19 +16,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class BookConverters {
 
     private final GenreConverters genreConverters;
     private final AuthorConverters authorConverters;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
-
-    public BookConverters(GenreConverters genreConverters, AuthorConverters authorConverters, AuthorRepository authorRepository, GenreRepository genreRepository) {
-        this.genreConverters = genreConverters;
-        this.authorConverters = authorConverters;
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
-    }
 
     public BookDTO toDTO(Book book) {
         return Optional.ofNullable(book).map(b -> BookDTO.builder()
