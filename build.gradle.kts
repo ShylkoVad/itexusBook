@@ -24,7 +24,10 @@ dependencies {
     implementation("org.hibernate:hibernate-core:7.0.0.Beta3")  // Hibernate Core
 
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.4.2")
-//    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.4.2")
+
+    implementation("org.springframework.boot:spring-boot-starter-logging:3.4.2")  // Spring Boot Starter для логирования
+    implementation("org.slf4j:slf4j-api:2.1.0-alpha1") // SLF4J API
+    implementation("ch.qos.logback:logback-classic:1.5.16") // Logback (по умолчанию используется в Spring Boot)
 }
 
 tasks.withType<JavaCompile> {
