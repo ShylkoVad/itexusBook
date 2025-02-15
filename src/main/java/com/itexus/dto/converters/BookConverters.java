@@ -43,6 +43,7 @@ public class BookConverters {
                                         .map(authorConverters::toDTO)
                                         .toList()) // Здесь используется Collectors
                                 .orElse(List.of())) // Если авторов нет, возвращаем пустой список
+                        .imageId(b.getImageId())
                         .build())
                 .orElse(null);
     }
@@ -64,6 +65,7 @@ public class BookConverters {
                     .publishedDate(bd.getPublishedDate())
                     .genre(genre)
                     .authors(authors)
+                    .imageId(bd.getImageId())
                     .build();
         }).orElse(null);
     }
