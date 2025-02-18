@@ -23,8 +23,13 @@ spring:
       max-file-size: 1000MB  # Установил максимальный размер файла
       max-request-size: 1000MB  # Установил максимальный размер запроса
 
+  main:
+    allow-circular-references: true
 
 # Дополнительные настройки
 logging:
   level:
     org.hibernate.SQL: DEBUG  # Уровень логирования для SQL-запросов
+
+jwt:
+  expiration-time: 3600000 # 60 минут в миллисекундах
