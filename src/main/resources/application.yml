@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Books_library
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update  # Опции: none, validate, update, create, create-drop
+      show-sql: true  # Показывать SQL-запросы в консоли
+    properties:
+      current_session_context_class: thread  # Контекст сессии
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/Books_library
+      database: Books_library
+
+  servlet:
+    multipart:
+      max-file-size: 1000MB  # Установил максимальный размер файла
+      max-request-size: 1000MB  # Установил максимальный размер запроса
+
+  main:
+    allow-circular-references: true
+
+# Дополнительные настройки
+logging:
+  level:
+    org.hibernate.SQL: DEBUG  # Уровень логирования для SQL-запросов
+
+jwt:
+  expiration-time: 3600000 # 60 минут в миллисекундах
