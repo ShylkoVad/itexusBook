@@ -1,7 +1,11 @@
-package com.itexus.domain;
+package com.itexus.author.domain;
 
+import com.itexus.book.domain.Book;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -18,10 +22,15 @@ import java.util.Set;
 @Entity
 @Table(name = "authors")
 @Data
-@EqualsAndHashCode(callSuper = true) // Добавлено для вызова методов суперкласса
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class Author extends BaseEntity {
+public class Author {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name")
     private String name;

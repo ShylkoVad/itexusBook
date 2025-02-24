@@ -1,4 +1,4 @@
-package com.itexus.domain;
+package com.itexus.user.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

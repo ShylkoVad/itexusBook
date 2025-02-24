@@ -1,7 +1,12 @@
-package com.itexus.domain;
+package com.itexus.book.domain;
 
+import com.itexus.author.domain.Author;
+import com.itexus.genre.domain.Genre;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -21,10 +26,15 @@ import java.util.Set;
 @Entity
 @Table(name = "books")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book extends BaseEntity {
+public class Book {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "title")
     private String title;
