@@ -1,13 +1,13 @@
-package com.itexus.service.impl;
+package com.itexus.user.service.impl;
 
-import com.itexus.domain.Role;
-import com.itexus.domain.User;
-import com.itexus.dto.RoleDTO;
-import com.itexus.dto.UserDTO;
-import com.itexus.dto.converters.UserConverters;
-import com.itexus.repository.RoleRepository;
-import com.itexus.repository.UserRepository;
-import com.itexus.service.UserService;
+import com.itexus.user.domain.Role;
+import com.itexus.user.domain.User;
+import com.itexus.user.dto.RoleDTO;
+import com.itexus.user.dto.UserDTO;
+import com.itexus.user.dto.converters.UserConverters;
+import com.itexus.user.repository.RoleRepository;
+import com.itexus.user.repository.UserRepository;
+import com.itexus.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;

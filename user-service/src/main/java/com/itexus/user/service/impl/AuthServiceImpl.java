@@ -1,11 +1,11 @@
-package com.itexus.service.impl;
+package com.itexus.user.service.impl;
 
-import com.itexus.config.JwtProvider;
-import com.itexus.domain.User;
-import com.itexus.dto.AuthResponse;
-import com.itexus.dto.UserCredentialsRequest;
-import com.itexus.service.AuthService;
-import com.itexus.service.UserService;
+import com.itexus.user.config.JwtProvider;
+import com.itexus.user.domain.User;
+import com.itexus.user.dto.AuthResponse;
+import com.itexus.user.dto.UserCredentialsRequest;
+import com.itexus.user.service.AuthService;
+import com.itexus.user.service.UserService;
 import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

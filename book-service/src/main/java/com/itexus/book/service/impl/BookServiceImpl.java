@@ -1,14 +1,14 @@
-package com.itexus.service.impl;
+package com.itexus.book.service.impl;
 
-import com.itexus.domain.Author;
-import com.itexus.domain.Book;
-import com.itexus.domain.Genre;
-import com.itexus.dto.BookDTO;
-import com.itexus.dto.converters.BookConverters;
-import com.itexus.repository.AuthorRepository;
-import com.itexus.repository.BookRepository;
-import com.itexus.repository.GenreRepository;
-import com.itexus.service.BookService;
+import com.itexus.author.domain.Author;
+import com.itexus.book.domain.Book;
+import com.itexus.genre.domain.Genre;
+import com.itexus.book.dto.BookDTO;
+import com.itexus.book.dto.converters.BookConverters;
+import com.itexus.author.repository.AuthorRepository;
+import com.itexus.book.repository.BookRepository;
+import com.itexus.genre.repository.GenreRepository;
+import com.itexus.book.service.BookService;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;

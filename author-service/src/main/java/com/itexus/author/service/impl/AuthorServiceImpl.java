@@ -1,10 +1,10 @@
-package com.itexus.service.impl;
+package com.itexus.author.service.impl;
 
-import com.itexus.domain.Author;
-import com.itexus.dto.AuthorDTO;
-import com.itexus.dto.converters.AuthorConverters;
-import com.itexus.repository.AuthorRepository;
-import com.itexus.service.AuthorService;
+import com.itexus.author.domain.Author;
+import com.itexus.author.dto.AuthorDTO;
+import com.itexus.author.dto.converters.AuthorConverters;
+import com.itexus.author.repository.AuthorRepository;
+import com.itexus.author.service.AuthorService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

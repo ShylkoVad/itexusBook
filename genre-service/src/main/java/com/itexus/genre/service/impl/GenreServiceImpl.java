@@ -1,10 +1,10 @@
-package com.itexus.service.impl;
+package com.itexus.genre.service.impl;
 
-import com.itexus.domain.Genre;
-import com.itexus.dto.GenreDTO;
-import com.itexus.dto.converters.GenreConverters;
-import com.itexus.repository.GenreRepository;
-import com.itexus.service.GenreService;
+import com.itexus.genre.domain.Genre;
+import com.itexus.genre.dto.GenreDTO;
+import com.itexus.genre.dto.converters.GenreConverters;
+import com.itexus.genre.repository.GenreRepository;
+import com.itexus.genre.service.GenreService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import java.util.List;
 @Transactional
 @AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
+
     private final GenreRepository genreRepository;
     private final GenreConverters genreConverters;
 
