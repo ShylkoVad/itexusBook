@@ -1,15 +1,16 @@
-package com.itexus.dto;
+package com.itexus.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class AuthResponse {
+@NoArgsConstructor
+public class RoleDTO {
 
-    private String accessToken;
+    private Long id;
+    private String name;
 }

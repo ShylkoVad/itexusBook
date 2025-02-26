@@ -1,4 +1,4 @@
-package com.itexus.dto;
+package com.itexus.book.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,11 +8,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.itexus.genre.dto.GenreDTO;
+import com.itexus.author.dto.AuthorDTO;
+
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookDTO {
+
     private Long id;
     private String title;
     private String description;

@@ -1,4 +1,4 @@
-package com.itexus.dto;
+package com.itexus.author.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorDTO {
+
     private Long id;
     private String name;
     private String surname;

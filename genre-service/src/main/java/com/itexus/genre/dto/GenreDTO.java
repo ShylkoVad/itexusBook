@@ -1,21 +1,16 @@
-package com.itexus.dto;
+package com.itexus.genre.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class GenreDTO {
 
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private List<RoleDTO> roles;
+    private String name;
 }
