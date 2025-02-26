@@ -1,7 +1,7 @@
-package com.itexus.service;
+package com.itexus.user.service;
 
-import com.itexus.dto.AuthResponse;
-import com.itexus.dto.UserCredentialsRequest;
+import com.itexus.user.dto.AuthResponse;
+import com.itexus.user.dto.UserCredentialsRequest;
 import jakarta.security.auth.message.AuthException;
 
 public interface AuthService {

@@ -1,7 +1,7 @@
-package com.itexus.service;
+package com.itexus.user.service;
 
-import com.itexus.domain.User;
-import com.itexus.dto.UserDTO;
+import com.itexus.user.domain.User;
+import com.itexus.user.dto.UserDTO;
 
 import java.util.List;
 

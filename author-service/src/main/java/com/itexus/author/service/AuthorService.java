@@ -1,6 +1,6 @@
-package com.itexus.service;
+package com.itexus.author.service;
 
-import com.itexus.dto.AuthorDTO;
+import com.itexus.author.dto.AuthorDTO;
 
 import java.util.List;
 

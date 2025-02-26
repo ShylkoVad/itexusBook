@@ -1,12 +1,13 @@
-package com.itexus.service;
+package com.itexus.book.service;
 
-import com.itexus.dto.BookDTO;
+import com.itexus.book.dto.BookDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface BookService {
+
     List<BookDTO> findAllBooks();
 
     BookDTO findByIdBook(Long id);

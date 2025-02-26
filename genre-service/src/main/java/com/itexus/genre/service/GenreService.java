@@ -1,10 +1,11 @@
-package com.itexus.service;
+package com.itexus.genre.service;
 
-import com.itexus.dto.GenreDTO;
+import com.itexus.genre.dto.GenreDTO;
 
 import java.util.List;
 
 public interface GenreService {
+
     GenreDTO findByIdGenre(Long id);
 
     List<GenreDTO> findAllGenres();

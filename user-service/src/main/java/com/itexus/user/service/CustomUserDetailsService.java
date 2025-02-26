@@ -1,8 +1,8 @@
-package com.itexus.service;
+package com.itexus.user.service;
 
-import com.itexus.domain.CustomUserDetails;
-import com.itexus.domain.User;
-import com.itexus.repository.UserRepository;
+import com.itexus.user.domain.CustomUserDetails;
+import com.itexus.user.domain.User;
+import com.itexus.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
