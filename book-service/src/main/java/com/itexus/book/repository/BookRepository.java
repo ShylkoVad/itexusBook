@@ -1,6 +1,6 @@
-package com.itexus.repository;
+package com.itexus.book.repository;
 
-import com.itexus.domain.Book;
+import com.itexus.book.domain.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

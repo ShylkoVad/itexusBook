@@ -1,6 +1,6 @@
-package com.itexus.repository;
+package com.itexus.user.repository;
 
-import com.itexus.domain.Role;
+import com.itexus.user.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
