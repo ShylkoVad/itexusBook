@@ -1,0 +1,30 @@
+server:
+  port: 8087  # Порт, на котором будет работать API Gateway
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user_service
+          uri: lb://user-service  # Используем логическое имя сервиса для балансировки нагрузки
+          predicates:
+            - Path=/users/**  # Эндпоинты, которые будут перенаправлены на user-service
+
+        - id: author_service
+          uri: lb://author-service # Используем логическое имя сервиса для балансировки нагрузки
+          predicates:
+              - Path=/authors/** # Эндпоинты, которые будут перенаправлены на author-service
+        - id: book_service
+          uri: lb://book-service # Используем логическое имя сервиса для балансировки нагрузки
+          predicates:
+                - Path=/books/** # Эндпоинты, которые будут перенаправлены на book-service
+        - id: genre_service
+          uri: lb://genre-service # Используем логическое имя сервиса для балансировки нагрузки
+          predicates:
+            - Path=/genres/** # Эндпоинты, которые будут перенаправлены на genre-service
+
+  application:
+    name: itexusBook  # Имя приложения
+
+  main:
+    web-application-type: reactive
