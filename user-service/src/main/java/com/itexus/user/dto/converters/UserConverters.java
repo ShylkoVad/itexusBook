@@ -1,7 +1,7 @@
-package com.itexus.dto.converters;
+package com.itexus.user.dto.converters;
 
-import com.itexus.domain.User;
-import com.itexus.dto.UserDTO;
+import com.itexus.user.domain.User;
+import com.itexus.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

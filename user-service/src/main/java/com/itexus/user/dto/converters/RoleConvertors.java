@@ -1,7 +1,7 @@
-package com.itexus.dto.converters;
+package com.itexus.user.dto.converters;
 
-import com.itexus.domain.Role;
-import com.itexus.dto.RoleDTO;
+import com.itexus.user.domain.Role;
+import com.itexus.user.dto.RoleDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
