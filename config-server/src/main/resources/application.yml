@@ -1,0 +1,20 @@
+server:
+  port: 8888  # Порт, на котором будет работать Config Server
+
+spring:
+  application:
+    name: config-server  # Имя приложения
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/ShylkoVad/itexusBook  # URL репозитория с конфигурациями
+          default-label: homework_12  # Указание ветки по умолчанию
+
+  consul:
+    discovery:
+      enabled: true  # Включить автоматическую регистрацию в Consul
+
+  main:
+    web-application-type: reactive
