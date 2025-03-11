@@ -1,7 +1,7 @@
-package com.itexus.config;
+package com.itexus.user.config;
 
-import com.itexus.domain.CustomUserDetails;
-import com.itexus.service.CustomUserDetailsService;
+import com.itexus.user.domain.CustomUserDetails;
+import com.itexus.user.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

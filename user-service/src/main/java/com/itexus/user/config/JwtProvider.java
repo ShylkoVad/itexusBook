@@ -1,4 +1,4 @@
-package com.itexus.config;
+package com.itexus.user.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

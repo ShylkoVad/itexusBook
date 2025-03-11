@@ -1,4 +1,4 @@
-package com.itexus.config;
+package com.itexus.user.config;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
