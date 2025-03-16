@@ -22,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(UserCredentialsRequest request) throws AuthException {
         // Поиск пользователя по логину и паролю
-        User user = userService.findByEmailAndPassword(request.getLogin(), request.getPassword());
+        User user = userService.findByEmailAndPassword(request.getEmail(), request.getPassword());
 
         // Проверка, найден ли пользователь
         if (user != null) {

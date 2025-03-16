@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserCredentialsRequest {
 
-    private String login;
+    private String email;
     private String password;
 }
