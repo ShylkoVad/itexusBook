@@ -22,4 +22,6 @@ public interface BookService {
 
     byte[] getImage(Long bookId);
 
+    List<Long> getAuthorIdsByBookId(Long bookId);
+
 }
