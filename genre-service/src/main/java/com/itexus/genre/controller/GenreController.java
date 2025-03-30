@@ -1,7 +1,7 @@
-package com.itexus.controller;
+package com.itexus.genre.controller;
 
-import com.itexus.dto.GenreDTO;
-import com.itexus.service.GenreService;
+import com.itexus.genre.dto.GenreDTO;
+import com.itexus.genre.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/genres")
 public class GenreController {
+
     private final GenreService genreService;
 
     @Autowired

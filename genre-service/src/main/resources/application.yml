@@ -1,0 +1,49 @@
+server:
+  port: 8083  # Порт, на котором будет работать сервис
+
+spring:
+  application:
+    name: genre-service  # Имя приложения
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true  # Включить автоматическую регистрацию в Consul
+        service-name: genre-service  # Имя сервиса для регистрации
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Books_library_genres  # URL подключения к базе данных
+    username: postgres  # Имя пользователя для подключения
+    password: 1234  # Пароль для подключения
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # Автоматическое обновление схемы базы данных
+      show-sql: true  # Показ SQL-запросов в консоли
+    properties:
+      hibernate:
+        format_sql: true  # Форматирование SQL-запросов для удобства чтения
+
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG  # Уровень логирования для SQL-запросов
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Логирование значений параметров
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true  # Включить проверку состояния базы данных

@@ -1,6 +1,6 @@
 package com.itexus.genre.domain;
 
-import com.itexus.book.domain.Book;
+//import com.itexus.book.domain.Book;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,8 +34,4 @@ public class Genre {
     @Column(name = "name")
     private String name;
 
-    @ToString.Exclude // для исключения поля из автоматически сгенерированного метода toString()
-    @EqualsAndHashCode.Exclude // для исключения поля из автоматически сгенерированных методов equals() и hashCode()
-    @OneToMany(mappedBy = "genre")
-    private Set<Book> books;
 }

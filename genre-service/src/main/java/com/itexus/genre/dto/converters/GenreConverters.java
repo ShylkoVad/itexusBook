@@ -1,7 +1,7 @@
-package com.itexus.dto.converters;
+package com.itexus.genre.dto.converters;
 
-import com.itexus.domain.Genre;
-import com.itexus.dto.GenreDTO;
+import com.itexus.genre.domain.Genre;
+import com.itexus.genre.dto.GenreDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
