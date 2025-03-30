@@ -1,7 +1,7 @@
-package com.itexus.dto.converters;
+package com.itexus.author.dto.converters;
 
-import com.itexus.domain.Author;
-import com.itexus.dto.AuthorDTO;
+import com.itexus.author.domain.Author;
+import com.itexus.author.dto.AuthorDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

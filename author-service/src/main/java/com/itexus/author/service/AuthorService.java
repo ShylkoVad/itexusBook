@@ -15,5 +15,4 @@ public interface AuthorService {
 
     AuthorDTO updateAuthor(AuthorDTO authorDTO);
 
-    List<AuthorDTO> findAuthorsByBookId(Long bookId);
 }
