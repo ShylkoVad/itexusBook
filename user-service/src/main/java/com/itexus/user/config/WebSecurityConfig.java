@@ -2,21 +2,18 @@ package com.itexus.user.config;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
-@EnableWebSecurity(debug = true)
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @Configuration
-@ComponentScan(basePackages = "com")
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 @AllArgsConstructor
 public class WebSecurityConfig {
 
@@ -28,15 +25,16 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
-                .csrf(CsrfConfigurer::disable) // Отключаем CSRF, если это необходимо
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/users/register", "/users/login").permitAll() // Разрешаем доступ к регистрации и логину
-//                        .requestMatchers("/admin/**").hasRole("ADMIN") // Только для администраторов
-                                .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                .csrf(ServerHttpSecurity.CsrfSpec::disable) // Отключаем CSRF, если это необходимо
+                .authorizeExchange(exchange -> exchange
+//                                .anyExchange().permitAll() // Разрешаем доступ ко всем запросам
+//                        .pathMatchers("/actuator/health").permitAll() // Разрешаем доступ к проверке состояния
+                        .pathMatchers("/users/register", "/users/login").permitAll() // Разрешаем доступ к регистрации и логину
+                        .anyExchange().authenticated() // Все остальные запросы требуют аутентификации
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем JWT фильтр
+                .addFilterBefore(jwtFilter, SecurityWebFiltersOrder.AUTHORIZATION); // Добавляем JWT фильтр перед авторизацией
         return http.build();
     }
 }

@@ -2,24 +2,21 @@ package com.itexus.user.config;
 
 import com.itexus.user.domain.CustomUserDetails;
 import com.itexus.user.service.CustomUserDetailsService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-
-import java.io.IOException;
-
-import static org.springframework.util.StringUtils.hasText;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 @Component
 @AllArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+@Slf4j
+public class JwtFilter implements WebFilter {
 
     public static final String AUTHORIZATION = "Authorization";
 
@@ -27,25 +24,44 @@ public class JwtFilter extends GenericFilterBean {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        logger.info("Do filter...");
-        String token = getTokenFromRequest((HttpServletRequest) servletRequest);
+    @NonNull
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
 
+        // Логируем заголовки запроса
+        System.out.println("Request headers: " + exchange.getRequest().getHeaders());
+
+        // Получаем токен из заголовка запроса
+        String token = getTokenFromRequest(exchange);
+        System.out.println("Received token: " + token); // Логируем полученный токен
+
+        // Проверяем, валиден ли токен
         if (token != null && jwtProvider.validateAccessToken(token)) {
+            // Получаем логин пользователя из токена
             String userLogin = jwtProvider.getAccessClaims(token).getSubject();
+
+            // Загружаем детали пользователя
             CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(userLogin);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+
+            // Создаем объект аутентификации
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    customUserDetails, null, customUserDetails.getAuthorities());
+
+            // Устанавливаем аутентификацию в контекст безопасности
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
-            logger.warn("Invalid or missing token");
+            // Логируем предупреждение о недействительном или отсутствующем токене
+            System.out.println("Invalid or missing token");
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        // Продолжаем выполнение цепочки фильтров
+        return chain.filter(exchange);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-        String bearer = request.getHeader(AUTHORIZATION);
-        if (hasText(bearer) && bearer.startsWith("Bearer ")) {
+    private String getTokenFromRequest(ServerWebExchange exchange) {
+        String bearer = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);
+        log.info("Authorization header: {}", bearer); // Логируем заголовок
+
+        if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
         return null;

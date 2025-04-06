@@ -11,6 +11,7 @@ import com.itexus.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @Transactional
 @AllArgsConstructor
 @Data
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO saveUser (UserDTO userDTO) {
+    public UserDTO saveUser(UserDTO userDTO) {
         // Проверяем, существует ли пользователь с таким email
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует.");
@@ -56,7 +58,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userConverters.fromDTO(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Хешируем пароль
+//        user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Хешируем пароль
+        user.setPassword(userDTO.getPassword());
         user.setRoles(List.of(role));
         user = userRepository.save(user);
 
@@ -121,16 +124,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmailAndPassword(String email, String password) {
+        log.info("Попытка аутентификации для email: {}", email);
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // Проверяем, совпадает ли введенный пароль с хешированным паролем в базе данных
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return user; // Возвращаем пользователя, если пароли совпадают
+            log.info("Пользователь найден: {}", user.getEmail());
+//            if (passwordEncoder.matches(password, user.getPassword())) {
+            if (password.equals(user.getPassword())) {
+
+                return user;
+            } else {
+                log.warn("Неверный пароль для пользователя: {}", user.getEmail());
+                throw new IllegalArgumentException("Неверный логин или пароль");
             }
+        } else {
+            log.warn("Пользователь не найден для email: {}", email);
+            throw new IllegalArgumentException("Неверный логин или пароль");
         }
-        return null; // Возвращаем null, если пользователь не найден или пароль неверный
     }
 
 

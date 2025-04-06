@@ -1,10 +1,12 @@
-package com.itexus.controller;
+package com.itexus.user.controller;
 
-import com.itexus.dto.AuthResponse;
-import com.itexus.dto.UserCredentialsRequest;
-import com.itexus.dto.UserDTO;
-import com.itexus.service.AuthService;
-import com.itexus.service.UserService;
+import com.itexus.user.domain.User;
+import com.itexus.user.dto.AuthResponse;
+import com.itexus.user.dto.UserCredentialsRequest;
+import com.itexus.user.dto.UserDTO;
+import com.itexus.user.service.AuthService;
+import com.itexus.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.security.auth.message.AuthException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -36,12 +40,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> auth(@RequestBody UserCredentialsRequest request) throws AuthException {
+    public ResponseEntity<?> auth(@RequestBody UserCredentialsRequest request) {
+        if (request.getEmail() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body("Email и пароль не могут быть null");
+        }
+
+        log.info("Аутентификация для email: {}", request.getEmail());
         try {
-            AuthResponse authResponse = authService.login(request);
-            return ResponseEntity.ok(authResponse);
+            return new ResponseEntity<>(authService.login(request), HttpStatus.OK);
         } catch (AuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
@@ -51,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<UserDTO>> findAllUsers() {
         List<UserDTO> userDTO = userService.findAllUsers();
         return ResponseEntity.ok(userDTO);
@@ -78,5 +86,12 @@ public class UserController {
         return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.OK);
     }
 
-
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        try {
+            return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
