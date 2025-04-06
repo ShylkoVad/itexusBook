@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -61,9 +62,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO findByIdBook(Long id) {
+
         // Получаем книгу по ID, выбрасываем исключение, если не найдено
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Книги с id %d не найдено.", id)));
+                .orElseThrow(NoSuchElementException::new); // Используем стандартное исключение
 
         // Преобразуем книгу в BookDTO
         BookDTO bookDTO = bookConverters.toDTO(book);
@@ -140,32 +142,40 @@ public class BookServiceImpl implements BookService {
         }
     }
 
+    @Override
     @Transactional
     public BookDTO updateBook(BookDTO bookDTO) {
         // Находим книгу по ID
         Book book = bookRepository.findById(bookDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Книги с id %d не найдено.", bookDTO.getId())));
+                .orElseThrow(NoSuchElementException::new); // Используем стандартное исключение
 
         // Обновляем поля книги
         book.setTitle(bookDTO.getTitle());
         book.setDescription(bookDTO.getDescription());
         book.setPublishedDate(bookDTO.getPublishedDate());
-//        book.setGenreId(bookDTO.getGenre());
+
+        // Обновляем жанр (если это нужно)
+        if (bookDTO.getGenre() != null && bookDTO.getGenre().getId() != null) {
+            book.setGenreId(bookDTO.getGenre().getId());
+        }
+
+        // Удаляем старые связи с авторами
+        bookRepository.removeBookAuthors(book.getId());
+
+        // Добавляем новые связи с авторами
+        if (bookDTO.getAuthors() != null) {
+            for (AuthorDTO author : bookDTO.getAuthors()) {
+                saveBookAuthor(book.getId(), author.getId());
+            }
+        }
 
         // Сохраняем обновленную книгу
         Book updatedBook = bookRepository.save(book);
 
-        // Сначала удаляем старые связи с авторами, если это необходимо
-        bookRepository.removeBookAuthors(updatedBook.getId());
-
-        // Затем добавляем новые связи с авторами
-        for (AuthorDTO authorId : bookDTO.getAuthors()) {
-            saveBookAuthor(updatedBook.getId(), authorId.getId());
-        }
-
         // Возвращаем DTO обновленной книги
         return bookConverters.toDTO(updatedBook);
     }
+
 
     @Override
     public void deleteBook(Long id) {
