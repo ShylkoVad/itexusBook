@@ -26,7 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.postgresql:postgresql:42.7.4'  // для добавления зависимости PostgreSQL JDBC драйвера
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.4.2'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.4.2'
 
     implementation 'org.springframework.boot:spring-boot-starter-logging'  // Spring Boot Starter для логирования
 
