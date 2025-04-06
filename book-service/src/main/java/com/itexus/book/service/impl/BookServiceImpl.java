@@ -127,25 +127,18 @@ public class BookServiceImpl implements BookService {
         Book book = bookConverters.fromDTO(bookDTO);
 
         // Сохраняем книгу в репозитории
-        book = bookRepository.save(book);
-
-        // Если у BookDTO есть идентификаторы авторов, сохраняем их связь с книгой
-        if (bookDTO.getAuthors() != null && !bookDTO.getAuthors().isEmpty()) {
-            saveBookAuthors(book.getId(), bookDTO.getAuthors());
-        }
+        book = bookRepository.save(book); // Hibernate автоматически сохранит связи в book_authors
 
         // Преобразуем сохраненную книгу обратно в BookDTO и возвращаем
         return bookConverters.toDTO(book);
     }
 
     // Метод для сохранения связи книги с несколькими авторами
-    public void saveBookAuthors(Long bookId, List<AuthorDTO> authorIds) {
-        for (AuthorDTO authorId : authorIds) {
-            saveBookAuthor(bookId, authorId.getId());
+    public void saveBookAuthors(Long bookId, List<AuthorDTO> authors) {
+        for (AuthorDTO author : authors) {
+            saveBookAuthor(bookId, author.getId());
         }
     }
-
-
 
     @Transactional
     public BookDTO updateBook(BookDTO bookDTO) {
