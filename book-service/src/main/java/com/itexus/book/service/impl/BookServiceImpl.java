@@ -45,48 +45,35 @@ public class BookServiceImpl implements BookService {
             // Получаем идентификаторы авторов
             List<Long> authorIds = getAuthorIdsByBookId(book.getId());
 
-            // Преобразуем идентификаторы в AuthorDTO
-            List<AuthorDTO> authors = authorIds.stream()
-                    .map(id -> new AuthorDTO(id, null, null, null)) // Здесь можно добавить другие параметры, если они известны
-                    .collect(Collectors.toList());
-            bookDTO.setAuthors(authors);
-
             // Получаем информацию о жанре через WebClient
             GenreDTO genreDTO = webClient.get()
                     .uri("/genres/{id}", book.getGenreId())
                     .retrieve()
-                    .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                        return response.bodyToMono(String.class)
-                                .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody)));
-                    })
-                    .onStatus(HttpStatusCode::is5xxServerError, response -> {
-                        return response.bodyToMono(String.class)
-                                .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody)));
-                    })
+                    .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody))))
+                    .onStatus(HttpStatusCode::is5xxServerError, response -> response.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody))))
                     .bodyToMono(GenreDTO.class)
                     .block();
 
             // Устанавливаем жанр как объект GenreDTO
             bookDTO.setGenre(genreDTO);
 
-//            // Получаем информацию об авторах через WebClient
-//            List<AuthorDTO> detailedAuthors = webClient.get()
-//                    .uri("/authors/{id}", String.join(",", authorIds.stream().map(String::valueOf).collect(Collectors.toList())))
-//                    .retrieve()
-//                    .onStatus(HttpStatusCode::is4xxClientError, response -> {
-//                        return response.bodyToMono(String.class)
-//                                .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody)));
-//                    })
-//                    .onStatus(HttpStatusCode::is5xxServerError, response -> {
-//                        return response.bodyToMono(String.class)
-//                                .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody)));
-//                    })
-//                    .bodyToFlux(AuthorDTO.class)
-//                    .collectList()
-//                    .block();
-//
-//            // Устанавливаем подробную информацию об авторах
-//            bookDTO.setAuthors(detailedAuthors);
+            // Получаем информацию об авторах через WebClient
+            List<AuthorDTO> detailedAuthors = authorIds.stream()
+                    .map(authorId -> webClient.get()
+                            .uri("/authors/{id}", authorId)
+                            .retrieve()
+                            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody))))
+                            .onStatus(HttpStatusCode::is5xxServerError, response -> response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody))))
+                            .bodyToMono(AuthorDTO.class)
+                            .block())
+                    .collect(Collectors.toList());
+
+            // Устанавливаем подробную информацию об авторах
+            bookDTO.setAuthors(detailedAuthors);
 
             return bookDTO;
         }).collect(Collectors.toList());
