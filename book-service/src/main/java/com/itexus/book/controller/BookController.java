@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> findByIdBook(@PathVariable Long id) {
+        log.info("Получен запрос на загрузку книги с ID: {}", id); // Логируем переданный ID
         BookDTO bookDTO = bookService.findByIdBook(id);
         return ResponseEntity.ok(bookDTO);
     }
@@ -58,17 +60,26 @@ public class BookController {
     }
 
     // Метод для загрузки изображения
+//    @PostMapping("/{id}/upload-image")
+//    public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+//        log.info("Метод uploadImage вызван для книги с ID: {}", id); // Временный лог
+//        log.info("Получен запрос на загрузку изображения для книги с ID: {}", id); // Логируем переданный ID
+//        try {
+//            String imageId = bookService.uploadImage(id, file); // Метод в сервисе для обработки загрузки
+//            return ResponseEntity.ok(imageId);
+//        } catch (IOException e) {
+//            log.error("Ошибка загрузки изображения для книги с ID: {}. Ошибка: {}", id, e.getMessage()); // Логируем ошибку
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки изображения");
+//        }
+//    }
+
     @PostMapping("/{id}/upload-image")
     public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Файл не должен быть пустым");
-        }
-        try {
-            String imageId = bookService.uploadImage(id, file); // Метод в сервисе для обработки загрузки
-            return ResponseEntity.ok(imageId);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки изображения");
-        }
+        // Логируем ID книги
+        log.info("Метод uploadImage вызван для книги с ID: {}", id);
+
+        // Возвращаем просто ID в ответе
+        return ResponseEntity.ok("ID книги: " + id);
     }
 
     // Метод для выгрузки изображения
