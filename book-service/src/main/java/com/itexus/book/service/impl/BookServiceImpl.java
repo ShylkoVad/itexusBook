@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,46 +40,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDTO> findAllBooks() {
-        List<BookDTO> books = bookRepository.findAll().stream().map(book -> {
+        return bookRepository.findAll().stream().map(book -> {
             BookDTO bookDTO = bookConverters.toDTO(book);
 
             // Получаем идентификаторы авторов
             List<Long> authorIds = getAuthorIdsByBookId(book.getId());
+            log.info("Author IDs for book ID {}: {}", book.getId(), authorIds);
 
-            // Получаем информацию о жанре через WebClient
-            GenreDTO genreDTO = webClient.get()
-                    .uri("/genres/{id}", book.getGenreId())
-                    .retrieve()
-                    .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class)
-                            .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody))))
-                    .onStatus(HttpStatusCode::is5xxServerError, response -> response.bodyToMono(String.class)
-                            .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody))))
-                    .bodyToMono(GenreDTO.class)
-                    .block();
-
-            // Устанавливаем жанр как объект GenreDTO
+            // Получаем информацию о жанре
+            GenreDTO genreDTO = fetchGenre(book.getGenreId());
             bookDTO.setGenre(genreDTO);
 
-            // Получаем информацию об авторах через WebClient
-            List<AuthorDTO> detailedAuthors = authorIds.stream()
-                    .map(authorId -> webClient.get()
-                            .uri("/authors/{id}", authorId)
-                            .retrieve()
-                            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody))))
-                            .onStatus(HttpStatusCode::is5xxServerError, response -> response.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody))))
-                            .bodyToMono(AuthorDTO.class)
-                            .block())
-                    .collect(Collectors.toList());
-
-            // Устанавливаем подробную информацию об авторах
+            // Получаем информацию об авторах
+            List<AuthorDTO> detailedAuthors = fetchAuthors(authorIds);
             bookDTO.setAuthors(detailedAuthors);
 
             return bookDTO;
         }).collect(Collectors.toList());
-
-        return books;
     }
 
     @Override
@@ -90,31 +68,58 @@ public class BookServiceImpl implements BookService {
         // Преобразуем книгу в BookDTO
         BookDTO bookDTO = bookConverters.toDTO(book);
 
-        // Используем метод getAuthorIdsByBookId для получения идентификаторов авторов
+        // Получаем идентификаторы авторов
         List<Long> authorIds = getAuthorIdsByBookId(book.getId());
-//        bookDTO.setAuthorIds(authorIds);
+        log.info("Author IDs for book ID {}: {}", book.getId(), authorIds);
 
-        // Получаем информацию о жанре через WebClient
-        GenreDTO genreDTO = webClient.get()
-                .uri("/genres/{id}", book.getGenreId())
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    // Обработка 4xx ошибок
-                    return Mono.error(new RuntimeException("Client error: " + response.statusCode()));
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, response -> {
-                    // Обработка 5xx ошибок
-                    return Mono.error(new RuntimeException("Server error: " + response.statusCode()));
-                })
-                .bodyToMono(GenreDTO.class)
-                .block(); // Блокируем для получения результата, так как это синхронный метод
-
-        // Устанавливаем жанр как объект GenreDTO
+        // Получаем информацию о жанре
+        GenreDTO genreDTO = fetchGenre(book.getGenreId());
         bookDTO.setGenre(genreDTO);
+
+        // Получаем информацию об авторах
+        List<AuthorDTO> detailedAuthors = fetchAuthors(authorIds);
+        bookDTO.setAuthors(detailedAuthors);
 
         return bookDTO; // Возвращаем BookDTO
     }
 
+    private GenreDTO fetchGenre(Long genreId) {
+        return webClient.get()
+                .uri("/genres/{id}", genreId)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class)
+                        .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody))))
+                .onStatus(HttpStatusCode::is5xxServerError, response -> response.bodyToMono(String.class)
+                        .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody))))
+                .bodyToMono(GenreDTO.class)
+                .block();
+    }
+
+    private List<AuthorDTO> fetchAuthors(List<Long> authorIds) {
+        return authorIds.stream()
+                .map(authorId -> {
+                    try {
+                        return webClient.get()
+                                .uri("/authors/{id}", authorId)
+                                .retrieve()
+                                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                                    return response.bodyToMono(String.class)
+                                            .flatMap(errorBody -> Mono.error(new RuntimeException("Client error: " + response.statusCode() + " - " + errorBody)));
+                                })
+                                .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                                    return response.bodyToMono(String.class)
+                                            .flatMap(errorBody -> Mono.error(new RuntimeException("Server error: " + response.statusCode() + " - " + errorBody)));
+                                })
+                                .bodyToMono(AuthorDTO.class)
+                                .block(); // Блокируем для получения результата
+                    } catch (Exception e) {
+                        log.error("Error fetching author with id {}", authorId, e);
+                        return null; // Или можно вернуть пустой AuthorDTO
+                    }
+                })
+                .filter(Objects::nonNull) // Убираем null значения
+                .collect(Collectors.toList());
+    }
 
     @Override
     public BookDTO saveBook(BookDTO bookDTO) {
