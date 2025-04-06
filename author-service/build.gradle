@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.itexus'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.36' // добавление зависимостей lombok
+    annotationProcessor 'org.projectlombok:lombok:1.18.36' // для обработки аннотаций
+    testImplementation(platform 'org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter' // добавление зависимости для написания и запуска тестов в Java
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql:42.7.4'  // для добавления зависимости PostgreSQL JDBC драйвера
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.4.2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-logging'  // Spring Boot Starter для логирования
+
+//    implementation 'org.springframework.boot:spring-boot-starter-security:3.4.2'
+    implementation 'org.springframework.security:spring-security-test:6.4.2'
+//    implementation 'org.springframework.security:spring-security-config:6.4.2'
+//    implementation 'org.springframework.security:spring-security-web:6.4.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+
+//    implementation 'io.jsonwebtoken:jjwt:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+//    implementation project(':book-service')
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
+//    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.cloud:spring-cloud-commons'
+
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add("-parameters")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
+}

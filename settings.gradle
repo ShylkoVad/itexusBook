@@ -1,0 +1,7 @@
+rootProject.name = "itexusBook"
+include 'author-service'
+include 'genre-service'
+include 'user-service'
+include 'book-service'
+include 'config-server'
+include 'gateway'
