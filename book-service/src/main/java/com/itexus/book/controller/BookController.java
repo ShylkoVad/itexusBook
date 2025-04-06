@@ -1,8 +1,9 @@
-package com.itexus.controller;
+package com.itexus.book.controller;
 
-import com.itexus.dto.BookDTO;
-import com.itexus.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.itexus.book.dto.BookDTO;
+import com.itexus.book.service.BookService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,13 +24,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/books")
+@AllArgsConstructor
+@Slf4j
 public class BookController {
-    private final BookService bookService;
 
-    @Autowired
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+    private final BookService bookService;
 
     @GetMapping("/all")
     public ResponseEntity<List<BookDTO>> findAllBooks() {
@@ -61,6 +60,9 @@ public class BookController {
     // Метод для загрузки изображения
     @PostMapping("/{id}/upload-image")
     public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Файл не должен быть пустым");
+        }
         try {
             String imageId = bookService.uploadImage(id, file); // Метод в сервисе для обработки загрузки
             return ResponseEntity.ok(imageId);

@@ -1,4 +1,4 @@
-package com.itexus.util;
+package com.itexus.book.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,8 +1,9 @@
 package com.itexus.book.domain;
 
 import com.itexus.author.domain.Author;
-import com.itexus.genre.domain.Genre;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,17 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @SuperBuilder
 @Entity
@@ -45,22 +44,25 @@ public class Book {
     @Column(name = "published_date")
     private LocalDate publishedDate;
 
-    @ToString.Exclude // для исключения поля из автоматически сгенерированного метода toString()
-    @EqualsAndHashCode.Exclude // для исключения поля из автоматически сгенерированных методов equals() и hashCode()
-    @ManyToMany
+    @Column(name = "image_id") // Поле для хранения ID изображения в GridFS
+    private String imageId;
+
+    @Column(name = "genre_id")
+    private Long genreId; // Поле для хранения идентификатора жанра
+
+    // Поле для хранения идентификаторов авторов
+    @ManyToMany // Используйте ManyToMany для связи с сущностью Author
     @JoinTable(
             name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id"))
-    private Set<Author> authors;
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private List<Author> bookAuthors;
 
-    @ToString.Exclude // для исключения поля из автоматически сгенерированного метода toString()
-    @EqualsAndHashCode.Exclude // для исключения поля из автоматически сгенерированных методов equals() и hashCode()
-    @ManyToOne
-    @JoinColumn(name = "genre_id") // Указываем, что это внешний ключ для жанра
-    private Genre genre; // теперь жанр является одним из полей книги
-
-    @Column(name = "image_id") // Поле для хранения ID изображения в GridFS
-    private String imageId;
+    // Поле для хранения идентификаторов авторов
+    @ElementCollection
+    @CollectionTable(name = "book_authors", joinColumns = @JoinColumn(name = "book_id"))
+    @Column(name = "author_id")
+    private List<Long> authorIds; // Список идентификаторов авторов
 
 }

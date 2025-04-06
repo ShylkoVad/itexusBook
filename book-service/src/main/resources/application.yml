@@ -1,0 +1,63 @@
+server:
+  port: 8082  # Порт, на котором будет работать сервис
+
+spring:
+  application:
+    name: book-service  # Имя приложения
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true  # Включить автоматическую регистрацию в Consul
+        service-name: book-service  # Имя сервиса для регистрации
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Books_library_books  # URL подключения к базе данных
+    username: postgres  # Имя пользователя для подключения
+    password: 1234  # Пароль для подключения
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # Автоматическое обновление схемы базы данных
+    show-sql: true  # Показ SQL-запросов в консоли
+    properties:
+      hibernate:
+        format_sql: true  # Форматирование SQL-запросов для удобства чтения
+
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/Books
+      database: Books
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1000MB  # Установил максимальный размер файла
+      max-request-size: 1000MB  # Установил максимальный размер запроса
+
+logging:
+  level:
+    root: INFO  # Уровень логирования по умолчанию
+    com.itexus.book: DEBUG  # Уровень логирования для вашего пакета
+    org.hibernate.SQL: DEBUG  # Уровень логирования для SQL-запросов
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Логирование значений параметров
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true  # Включить проверку состояния базы данных

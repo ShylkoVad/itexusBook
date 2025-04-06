@@ -1,5 +1,6 @@
 package com.itexus.book.service;
 
+import com.itexus.author.dto.AuthorDTO;
 import com.itexus.book.dto.BookDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,5 +24,7 @@ public interface BookService {
     byte[] getImage(Long bookId);
 
     List<Long> getAuthorIdsByBookId(Long bookId);
+
+    void saveBookAuthors(Long bookId, List<AuthorDTO> authorIds);
 
 }
