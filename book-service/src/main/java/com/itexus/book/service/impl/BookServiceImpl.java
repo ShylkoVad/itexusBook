@@ -4,6 +4,8 @@ import com.itexus.author.dto.AuthorDTO;
 import com.itexus.book.domain.Book;
 import com.itexus.book.dto.BookDTO;
 import com.itexus.book.dto.converters.BookConverters;
+import com.itexus.book.exceptions.BookNotFoundException;
+import com.itexus.book.exceptions.ImageUploadException;
 import com.itexus.book.repository.BookRepository;
 import com.itexus.book.service.BookService;
 import com.itexus.genre.dto.GenreDTO;
@@ -25,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,7 @@ public class BookServiceImpl implements BookService {
 
         // Получаем книгу по ID, выбрасываем исключение, если не найдено
         Book book = bookRepository.findById(id)
-                .orElseThrow(NoSuchElementException::new); // Используем стандартное исключение
+                .orElseThrow(() -> new BookNotFoundException(id)); // Используем пользовательское исключение
 
         // Преобразуем книгу в BookDTO
         BookDTO bookDTO = bookConverters.toDTO(book);
@@ -125,6 +126,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO saveBook(BookDTO bookDTO) {
+
         // Преобразуем BookDTO в объект Book
         Book book = bookConverters.fromDTO(bookDTO);
 
@@ -137,6 +139,7 @@ public class BookServiceImpl implements BookService {
 
     // Метод для сохранения связи книги с несколькими авторами
     public void saveBookAuthors(Long bookId, List<AuthorDTO> authors) {
+
         for (AuthorDTO author : authors) {
             saveBookAuthor(bookId, author.getId());
         }
@@ -145,9 +148,10 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookDTO updateBook(BookDTO bookDTO) {
+
         // Находим книгу по ID
         Book book = bookRepository.findById(bookDTO.getId())
-                .orElseThrow(NoSuchElementException::new); // Используем стандартное исключение
+                .orElseThrow(() -> new BookNotFoundException(bookDTO.getId())); // Используем ваше исключение
 
         // Обновляем поля книги
         book.setTitle(bookDTO.getTitle());
@@ -176,19 +180,29 @@ public class BookServiceImpl implements BookService {
         return bookConverters.toDTO(updatedBook);
     }
 
-
     @Override
     public void deleteBook(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Книги с id %d не найдено.", id)));
-        bookRepository.delete(book);
-    }
 
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id)); // Используем пользовательское исключение
+        bookRepository.delete(book); // Удаляем книгу
+    }
 
     // Реализация метода загрузки изображения
     @Override
     public String uploadImage(Long bookId, MultipartFile file) throws IOException {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Книга не найдена"));
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> {
+                    System.out.println("Книга с ID " + bookId + " не найдена."); // Логирование
+                    return new BookNotFoundException(bookId);
+                });
+
+        // Проверка, что файл не пустой
+        if (file.isEmpty()) {
+            System.out.println("Попытка загрузки пустого файла."); // Логирование
+            throw new ImageUploadException("Файл не может быть пустым", null);
+        }
 
         // Создаем ObjectId для файла
         ObjectId fileId = new ObjectId();
@@ -196,13 +210,16 @@ public class BookServiceImpl implements BookService {
         // Сохраняем файл в GridFS с использованием fileId
         try (InputStream inputStream = file.getInputStream()) {
             gridFSBucket.uploadFromStream(fileId.toHexString(), inputStream);
+        } catch (IOException e) {
+            System.out.println("Ошибка при загрузке изображения: " + e.getMessage()); // Логирование
+            throw new ImageUploadException("Ошибка при загрузке изображения", e);
         }
 
         // Сохраняем идентификатор файла (ObjectId) в объекте книги
-        book.setImageId(fileId.toHexString()); // Сохраняем как строку, используя toHexString()
+        book.setImageId(fileId.toHexString());
         bookRepository.save(book);
 
-        return fileId.toHexString(); // Возвращаем идентификатор файла в виде строки
+        return fileId.toHexString();
     }
 
     // Реализация метода получения изображения
