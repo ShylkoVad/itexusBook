@@ -1,7 +1,7 @@
-package com.itexus.controller;
+package com.itexus.author.controller;
 
-import com.itexus.dto.AuthorDTO;
-import com.itexus.service.AuthorService;
+import com.itexus.author.dto.AuthorDTO;
+import com.itexus.author.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
